@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+---
+
+<section id="contact" class="">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<h2 class="text-2xl font-bold mb-8">Contact</h2>
+		<div class="flex flex-col gap-6">
+			<a
+				href="tel:+1234567890"
+				class="flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors"
+			>
+				<Icon name="phone" className="w-6 h-6" size={24} />
+				
+				<span>289-941-5033</span>
+			</a>
+			<a
+				href="mailto:venusfence.1@gmail.com"
+				class="flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors"
+			>
+				<Icon name="email" className="w-6 h-6" size={24} />
+				<span>venusfence.1@gmail.com</span>
+			</a>
+			<a
+				href="https://instagram.com"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors"
+			>
+				<Icon name="instagram" className="w-6 h-6" size={24} />
+				<span>Follow us on Instagram</span>
+			</a>
+		</div>
+	</div>
+</section>

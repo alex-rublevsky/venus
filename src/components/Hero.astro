@@ -1,0 +1,27 @@
+---
+const baseUrl = "https://pub-92598708a02144628d401b04dd2b81c7.r2.dev/logos/";
+import { Image } from 'astro:assets';
+---
+    
+<section id="hero" class="relative">
+    <div class="relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-row pt-10">
+                <div class="flex flex-col items-start gap-8  ">
+                    <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
+                        Superior Fencing, Renovations & Landscaping
+                    </h1>
+                    <p>Hamilton, ON</p>
+                  
+                </div>
+                <Image 
+                src={baseUrl + "venus.webp"} 
+                alt="Venus BuildWorks Logo" 
+                width={200} 
+                height={200} 
+                class="object-cover flex-shrink-0" 
+            />
+            </div>
+        </div>
+    </div>
+</section>

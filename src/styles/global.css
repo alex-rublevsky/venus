@@ -1,0 +1,313 @@
+@import "tailwindcss";
+
+::selection {
+	background: var(--primary);
+	color: var(--primary-foreground);
+	text-shadow: none;
+}
+
+::-moz-selection {
+	background: var(--primary);
+	color: var(--primary-foreground);
+	text-shadow: none;
+}
+
+
+
+@theme {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-foreground-muted: color-mix(
+		in oklch,
+		var(--foreground) 45%,
+		var(--background)
+	);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-hover: color-mix(in oklch, var(--primary) 80%, white 20%);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent-hover: color-mix(in oklch, var(--accent) 80%, white 20%);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-discount-badge: var(--discount-badge);
+	--color-discount-badge-foreground: var(--discount-badge-foreground);
+
+	--radius-xl: calc(var(--radius) + 2rem);
+	--radius-lg: var(--radius);
+	--radius-md: calc(var(--radius) - 0.1rem);
+	--radius-sm: calc(var(--radius) - 3rem);
+	--radius-xs: calc(var(--radius) - 0.7rem);
+
+	--font-family-sans: "Overused Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+
+:root {
+	--hue: 29.52;
+	--beige-hue: 84.88;
+
+	--background: oklch(0.9794 0.021 var(--beige-hue));
+	--foreground: oklch(0.1532 0.0344 var(--hue));
+
+	--primary: oklch(0.3721 0.1297 var(--hue));
+	--primary-foreground: oklch(0.9672 0.0043 var(--hue));
+
+	--muted: oklch(0.9088 0.0881 var(--beige-hue));
+	--muted-foreground: oklch(0.5 0.0374 var(--hue));
+
+	/* make sure border is the same as secondary but with 50% opacity */
+	--secondary: oklch(0.5072 0.2029 var(--hue));
+	--secondary-hover: oklch(0.5072 0.2029 var(--hue) calc(l_ * _0 0.9));
+
+	--accent: oklch(0.54 0.2203 var(--hue));
+	--accent-foreground: var(--background);
+
+	--destructive: oklch(0.6368 0.2078 25.33);
+	--destructive-foreground: oklch(0.9779 0.0112 var(--hue));
+
+	--border: oklch(0.8895 0.1033 var(--beige-hue) / 0.5);
+	--input: oklch(0.8895 0.1033 var(--beige-hue));
+	--ring: 0 0% 3.9%;
+
+	--radius: 1rem;
+	--sidebar-background: 0 0% 98%;
+	--sidebar-foreground: 240 5.3% 26.1%;
+	--sidebar-primary: 240 5.9% 10%;
+	--sidebar-primary-foreground: 0 0% 98%;
+	--sidebar-accent: 240 4.8% 95.9%;
+	--sidebar-accent-foreground: 240 5.9% 10%;
+	--sidebar-border: 220 13% 91%;
+	--sidebar-ring: 217.2 91.2% 59.8%;
+	--discount-badge: #bee42b;
+	--discount-badge-foreground: #3c480b;
+
+	
+	/* Standard transition settings (unified) */
+	--transition-standard-duration: 0.3s;
+	--transition-standard-easing: ease-out;
+	--transition-standard: all var(--transition-standard-duration)
+		var(--transition-standard-easing);
+
+	/* Faster transition settings (unified) */
+	--transition-faster-duration: 0.2s;
+	--transition-faster-easing: ease-out;
+	--transition-faster: all var(--transition-faster-duration)
+		var(--transition-faster-easing);
+
+	/* Reveal animation settings (for smooth content fade-in) */
+	--animation-reveal-duration: 0.4s;
+	--animation-reveal-easing: cubic-bezier(0.4, 0, 0.2, 1);
+	--animation-reveal: fadeIn var(--animation-reveal-duration)
+		var(--animation-reveal-easing);
+
+	/* Section horizontal padding - standardized across the project */
+	/* Mobile default */
+	--section-padding-x: 1rem;
+
+	/* Section top padding for first H1 - standardized across the project */
+	/* Mobile default */
+	--section-padding-top: 0.4rem;
+}
+
+@media (width >= 640px) {
+	:root {
+		/* Desktop padding */
+		--section-padding-x: 1.5rem;
+		/* Desktop top padding */
+		--section-padding-top: 0.7rem;
+	}
+}
+
+@layer base {
+	* {
+		border-color: var(--border);
+	}
+
+	body {
+		background-color: var(--background);
+		color: var(--foreground);
+	}
+}
+
+@layer utilities {
+	section {
+		background-color: var(--background);
+		padding-bottom: 6rem;
+		padding-left: var(--section-padding-x);
+		z-index: 1;
+		padding-right: var(--section-padding-x);
+		position: relative;
+	}
+
+	section.no-padding {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	/* Add padding to titles and controls in sections with no-padding */
+	section.no-padding > h2 {
+		padding-left: var(--section-padding-x);
+		padding-right: var(--section-padding-x);
+	}
+
+	/* Add top padding to first H1 in first section of a page */
+	/* This uses CSS :has() to handle both direct and nested h1 cases efficiently */
+
+	/* Direct child case: section > h1 */
+	section:first-of-type > h1:first-child {
+		padding-top: var(--section-padding-top);
+	}
+
+	/* Nested case: when section doesn't have direct h1 child, target first nested h1 */
+	/* Uses :has() to check for direct h1, and only applies to nested h1s if none exists */
+	section:first-of-type:not(:has(> h1)) h1:first-of-type {
+		padding-top: var(--section-padding-top);
+	}
+}
+
+/* Typography */
+
+/* fluid responsive */
+html {
+	font-size: calc(0.5668103448275863rem + 0.5172413793103448vw);
+	scroll-behavior: smooth;
+}
+
+@media screen and (width <= 2500px) {
+	html {
+		font-size: calc(0.5668103448275863rem + 0.5172413793103448vw);
+	}
+}
+
+@media screen and (width <= 1920px) {
+	html {
+		font-size: calc(0.6875rem + 0.41666666666666674vw);
+	}
+}
+
+@media screen and (width <= 1440px) {
+	html {
+		font-size: calc(0.9688475546305931rem + 0.10405827263267431vw);
+	}
+}
+
+@media screen and (width <= 479px) {
+	html {
+		font-size: 1rem;
+	}
+}
+
+h1 {
+	font-size: 2.9rem;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 1.2%;
+	color: var(--foreground);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+h2 {
+	font-size: 2.5rem;
+	font-weight: 400;
+	line-height: 0.95;
+	letter-spacing: 1.2%;
+	color: var(--foreground);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+h3 {
+	font-size: 2.1rem;
+	line-height: 1;
+	font-weight: 300;
+	letter-spacing: 1.2%;
+	color: var(--foreground);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+h4 {
+	font-size: 1.6rem;
+	line-height: 1;
+	font-weight: 600;
+	letter-spacing: 1.2%;
+	color: var(--foreground);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+h5 {
+	font-size: 1.4rem;
+	line-height: 1;
+	font-weight: 600;
+	letter-spacing: 1.2%;
+	color: var(--foreground);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+h6 {
+	font-size: 1.15rem;
+	line-height: 1;
+	font-weight: 500;
+	letter-spacing: 1.2%;
+	color: var(--foreground);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+p {
+	line-height: 1.5;
+	color: var(--foreground);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+span {
+	color: var(--foreground);
+}
+
+.largeDescription {
+	line-height: 1.1;
+	font-weight: 100;
+	max-width: 45ch;
+}
+
+.smallerText {
+	font-size: 0.9rem;
+}
+
+@media (width <= 640px) {
+	h1 {
+		font-size: 2.7rem;
+	}
+
+	h2 {
+		font-size: 2.5rem;
+	}
+
+	h3 {
+		font-size: 2rem;
+	}
+
+	h4 {
+		font-size: 1.6rem;
+	}
+
+	h5 {
+		font-size: 1.2rem;
+	}
+}

@@ -1,0 +1,21 @@
+---
+import { Image } from 'astro:assets';
+const baseUrl = "https://pub-92598708a02144628d401b04dd2b81c7.r2.dev/content/";
+const images = [
+    {
+        src: "grass.webp",
+        alt: "Gallery image"
+    },
+    {
+        src: "deck.webp",
+        alt: "Gallery image"
+    }]
+---
+
+<section id="gallery">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {images.map((image) => (
+            <Image src={baseUrl + image.src} alt={image.alt} width={1000} height={1000} class="w-full h-full object-cover" />
+        ))}
+    </div>
+</section>

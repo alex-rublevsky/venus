@@ -1,0 +1,55 @@
+---
+import NavBar from "../components/NavBar.astro";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro Basics</title>
+	</head>
+	
+	<body>
+		<NavBar />
+		<slot />
+	</body>
+
+		<footer class="flex flex-col items-center justify-center pt-16 pb-38 md:pb-16">
+			{/* TODO: set the year to a reactive value */}
+			<div class="flex gap-2 flex-wrap justify-center items-center">
+				<p class="text-center">
+					{" "}
+					© All rights are reserved by the team of Venus BuildWorks and it’s owner Iqbal Masih. date: {new Date().getFullYear()}
+				</p>
+				{/* TODO: add link www.rublevsky.studio */}
+				<p class="text-center">
+					Like the site?{" "}
+					<a
+						href="https://www.rublevsky.studio"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="text-accent!"
+					>
+						Contact the developer{" "}
+					</a>
+				</p>
+			</div>
+		</footer>
+
+
+
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>
