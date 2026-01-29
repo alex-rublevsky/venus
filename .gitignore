@@ -24,3 +24,6 @@ pnpm-debug.log*
 .idea/
 .pnpm-store
 .vscode
+wrangler.jsonc
+public/.assetsignore
+pnpm-lock.yaml
