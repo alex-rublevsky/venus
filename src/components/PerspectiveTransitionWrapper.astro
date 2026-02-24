@@ -1,5 +1,4 @@
 ---
-import PerspectiveController from './PerspectiveController.tsx';
 ---
 
 <div class="perspective-transition-container" data-perspective-container>
@@ -10,8 +9,6 @@ import PerspectiveController from './PerspectiveController.tsx';
         <slot name="section2" />
     </div>
 </div>
-
-<PerspectiveController client:load />
 
 <style>
     .perspective-transition-container {
@@ -27,6 +24,9 @@ import PerspectiveController from './PerspectiveController.tsx';
         z-index: 1;
         will-change: transform;
         transform-origin: center center;
+        animation: section1-perspective linear forwards;
+        animation-timeline: scroll(root);
+        animation-range: 0vh 150vh;
     }
 
     .perspective-section-1 > :global(section) {
@@ -46,6 +46,9 @@ import PerspectiveController from './PerspectiveController.tsx';
         transform-origin: center center;
         display: flex;
         align-items: center;
+        animation: section2-perspective linear forwards;
+        animation-timeline: scroll(root);
+        animation-range: 0vh 150vh;
     }
     
     .perspective-section-2 > :global(section) {
@@ -55,4 +58,85 @@ import PerspectiveController from './PerspectiveController.tsx';
         display: flex;
         align-items: center;
     }
+
+    @keyframes section1-perspective {
+        from {
+            transform: scale(1) rotate(0deg);
+        }
+        to {
+            transform: scale(0.8) rotate(-5deg);
+        }
+    }
+
+    @keyframes section2-perspective {
+        from {
+            transform: scale(0.8) rotate(5deg);
+        }
+        to {
+            transform: scale(1) rotate(0deg);
+        }
+    }
+
+    /* Fallback for browsers without scroll-driven animations support */
+    @supports not (animation-timeline: scroll()) {
+        .perspective-section-1 {
+            animation: none;
+        }
+        
+        .perspective-section-2 {
+            animation: none;
+        }
+    }
 </style>
+
+<script>
+    // Fallback for browsers without scroll-driven animations support
+    if (!CSS.supports('animation-timeline: scroll()')) {
+        const container = document.querySelector('[data-perspective-container]');
+        const section1 = document.querySelector('[data-perspective-section="1"]');
+        const section2 = document.querySelector('[data-perspective-section="2"]');
+        
+        if (container && section1 && section2) {
+            let ticking = false;
+            
+            const updateTransforms = () => {
+                const scrollTop = window.scrollY;
+                const containerTop = container.offsetTop;
+                const containerHeight = container.offsetHeight;
+                const viewportHeight = window.innerHeight;
+                
+                // Calculate scroll progress (0 to 1) based on container position
+                // Animation runs from when container enters viewport to 150vh of scroll
+                const scrollProgress = Math.max(0, Math.min(1, scrollTop / (150 * viewportHeight / 100)));
+                
+                // Section 1: scale 1 -> 0.8, rotate 0 -> -5deg
+                const scale1 = 1 - (scrollProgress * 0.2);
+                const rotate1 = scrollProgress * -5;
+                section1.style.transform = `scale(${scale1}) rotate(${rotate1}deg)`;
+                
+                // Section 2: scale 0.8 -> 1, rotate 5 -> 0deg
+                const scale2 = 0.8 + (scrollProgress * 0.2);
+                const rotate2 = 5 - (scrollProgress * 5);
+                section2.style.transform = `scale(${scale2}) rotate(${rotate2}deg)`;
+                
+                ticking = false;
+            };
+            
+            const requestTick = () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateTransforms);
+                    ticking = true;
+                }
+            };
+            
+            // Initial update
+            updateTransforms();
+            
+            // Update on scroll
+            window.addEventListener('scroll', requestTick, { passive: true });
+            
+            // Update on resize
+            window.addEventListener('resize', requestTick, { passive: true });
+        }
+    }
+</script>

@@ -7,7 +7,6 @@ export const galleryCategories = [
 			{ src: "house-renovations/4.webp", alt: "House renovation" },
 			{ src: "house-renovations/5.webp", alt: "House renovation" },
 			{ src: "house-renovations/10.webp", alt: "Floor renovation detail" },
-
 			{ src: "house-renovations/12.webp", alt: "House renovation" },
 			{ src: "house-renovations/19.webp", alt: "House renovation" },
 			{ src: "house-renovations/13.webp", alt: "House renovation" },
