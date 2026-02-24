@@ -71,9 +71,8 @@ export function initNavigationController() {
       }
     });
 
-    if (bestHref) {
-      setActiveLink(bestHref);
-    }
+    // Always update, even if bestHref is null (clears active state)
+    setActiveLink(bestHref);
   }
 
   // Intersection Observer for efficient scroll detection

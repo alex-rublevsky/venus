@@ -20,7 +20,6 @@ const navItems = [
     {navItems.map((item, index) => (
       <a 
         href={item.href} 
-        class:list={[index === 0 && 'active']}
         data-nav-link
       >
         {item.label}
@@ -85,7 +84,7 @@ const navItems = [
     text-decoration: none;
     font-size: 0.9rem;
     white-space: nowrap;
-    transition: color 0.2s;
+    transition: color 0.4s ease-out;
     
     &:before {
       content: "";
@@ -112,7 +111,7 @@ const navItems = [
     bottom: anchor(bottom);
     left: anchor(left);
     position: absolute;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     border-radius: 500px;
     
     &.active {
