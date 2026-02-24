@@ -120,7 +120,7 @@ export default function SplashLoader() {
         setTimeout(() => {
           document.documentElement.style.overflow = '';
           document.body.style.overflow = '';
-        }, 1600);
+        }, 1200);
         cleanup();
         return;
       }
@@ -137,6 +137,10 @@ export default function SplashLoader() {
 
       // Add CSS scoping class to <html>
       document.documentElement.classList.add('splash-dismissing');
+      
+      // Add splash-revealed class to trigger entrance animations (like nail falling) BEFORE transition
+      // This makes the nail start falling while the splash is transitioning out
+      document.documentElement.classList.add('splash-revealed');
 
       try {
         const transition = document.startViewTransition(() => {
@@ -151,14 +155,11 @@ export default function SplashLoader() {
 
         await transition.finished;
         
-        // Add splash-revealed class to trigger entrance animations (like nail falling)
-        document.documentElement.classList.add('splash-revealed');
-        
-        // Keep scroll locked until nail finishes falling (0.4s delay + 1.2s animation = 1.6s)
+        // Keep scroll locked until nail finishes falling (1.2s animation)
         setTimeout(() => {
           document.documentElement.style.overflow = '';
           document.body.style.overflow = '';
-        }, 1600);
+        }, 1200);
       } catch (error) {
         // Transition failed, just hide splash
         setVisible(false);
@@ -167,7 +168,7 @@ export default function SplashLoader() {
         setTimeout(() => {
           document.documentElement.style.overflow = '';
           document.body.style.overflow = '';
-        }, 1600);
+        }, 1200);
       } finally {
         // Cleanup after animation completes
         navbarLogo.style.viewTransitionName = '';

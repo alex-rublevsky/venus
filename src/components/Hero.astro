@@ -3,62 +3,75 @@ const baseUrl = "https://pub-92598708a02144628d401b04dd2b81c7.r2.dev/";
 import logoSvg from '../data/logotype.svg?raw';
 ---
 
-<section id="hero" class="hero-section">
-    <div class="hero-sticky-wrapper">
-        <p class="absolute top-0 pt-5 mx-auto">Hamilton, ON</p> 
-        <div class="hero-content">
-           
-           
-            
-            <div class="logo-animation-wrapper">
-                <!-- Hammer and Nail Animation -->
-                <div class="hammer-nail-container">
-                    <img 
-                        src={baseUrl + "misc/nail.webp"} 
-                        alt="Nail decoration" 
-                        class="nail-sticking"
-                        aria-hidden="true"
-                    />
-                    <img 
-                        src={baseUrl + "misc/hammer.webp"} 
-                        alt="Hammer decoration" 
-                        class="hammer-flying"
-                        aria-hidden="true"
-                    />
-                </div>
+<div class="hero-outer-wrapper">
+    <section id="hero" class="hero-section">
+        <div class="hero-sticky-wrapper">
+            <p>Hamilton, ON</p> 
+            <div class="hero-content">
+               
+               
                 
-                <div class="logo-container">
-                    <div class="logotype" data-hero-logotype set:html={logoSvg} />
+                <div class="logo-animation-wrapper">
+                    <!-- Hammer and Nail Animation -->
+                    <div class="hammer-nail-container">
+                        <img 
+                            src={baseUrl + "misc/nail.webp"} 
+                            alt="Nail decoration" 
+                            class="nail-sticking"
+                            aria-hidden="true"
+                        />
+                        <img 
+                            src={baseUrl + "misc/hammer.webp"} 
+                            alt="Hammer decoration" 
+                            class="hammer-flying"
+                            aria-hidden="true"
+                        />
+                    </div>
+                    
+                    <div class="logo-container">
+                        <div class="logotype" data-hero-logotype set:html={logoSvg} />
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
 
 <style>
-    .hero-section {
-        view-timeline-name: --hero-timeline;
+    .hero-outer-wrapper {
         position: relative;
+        overflow: clip;
         /* Extended height: full screen + scroll distance for animation */
         height: calc(100vh + 50rem);
-        overflow: hidden;
+    }
+
+    .hero-section {
+        view-timeline-name: --hero-timeline;
+        view-timeline-axis: block;
+        position: relative;
+        height: 100%;
     }
 
     .hero-sticky-wrapper {
-        position: relative;
-        height: 100%;
+        position: sticky;
+        top: 0;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        padding-top: 4rem;
+        justify-content: flex-end;
+        padding-bottom: 2rem;
         width: 100%;
+        z-index: 10;
     }
     
     /* Location text entrance animation */
     .hero-sticky-wrapper > p {
+        position: absolute;
+        top: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
         opacity: 0;
-        transform: translateY(-20px);
     }
     
     html.splash-revealed .hero-sticky-wrapper > p {
@@ -75,10 +88,9 @@ import logoSvg from '../data/logotype.svg?raw';
 
     .logo-animation-wrapper {
         width: 100vw;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, calc(-50% + 5rem));
+        position: relative;
+        left: 0;
+        transform: none;
     }
 
     .logo-container {
@@ -125,7 +137,7 @@ import logoSvg from '../data/logotype.svg?raw';
     /* Falling animation after splash */
     html.splash-revealed .nail-sticking {
         opacity: 1;
-        animation: nail-fall 1.2s cubic-bezier(0.34, 0, 0.84, 0) 0.4s forwards;
+        animation: nail-fall 1.2s cubic-bezier(0.34, 0, 0.84, 0) forwards;
     }
     
     /* Enable scroll animation after nail lands - higher specificity */
@@ -134,7 +146,7 @@ import logoSvg from '../data/logotype.svg?raw';
         transform: translateX(-45%) translateY(0);
         animation: nail-hammer-in ease-out forwards;
         animation-timeline: --hero-timeline;
-        animation-range: entry 0% exit 0%;
+        animation-range: contain 0% contain 100%;
     }
 
     .hammer-flying {
@@ -157,7 +169,7 @@ import logoSvg from '../data/logotype.svg?raw';
         animation: hammer-entrance 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards,
                    hammer-fly ease-out forwards;
         animation-timeline: auto, --hero-timeline;
-        animation-range: normal, entry 0% exit 0%;
+        animation-range: normal, contain 0% contain 100%;
     }
 
     /* Nail falling from off-screen (gravity effect) */
@@ -193,11 +205,11 @@ import logoSvg from '../data/logotype.svg?raw';
     @keyframes fade-in-down {
         from {
             opacity: 0;
-            transform: translateY(-20px);
+            transform: translateX(-50%) translateY(-20px);
         }
         to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
         }
     }
     
@@ -206,11 +218,11 @@ import logoSvg from '../data/logotype.svg?raw';
         0% {
             transform: translateX(-45%) translateY(0);
         }
-        74% {
+        68% {
             /* Nail stays still for first 70% of scroll */
             transform: translateX(-45%) translateY(0);
         }
-        85% {
+        80% {
             /* Nail goes deeper, but still sticking out - ends higher */
             transform: translateX(-45%) translateY(7.8vw);
         }
@@ -222,16 +234,11 @@ import logoSvg from '../data/logotype.svg?raw';
 
     @keyframes hammer-fly {
         0% {
-            opacity: 0;
-            transform: translateX(calc(100% + 20vw)) rotate(225deg);
-        }
-        /* Movement left happens from 0-25% */
-        25% {
             opacity: 1;
-            transform: translateX(37vw) rotate(225deg);
+            transform: translateX(37vw) rotate(180deg);
         }
-        /* Rotation happens from 25-85% */
-        85% {
+        /* Rotation happens from 0-70% */
+        80% {
             opacity: 1;
             transform: translateX(37vw) rotate(0deg);
         }
