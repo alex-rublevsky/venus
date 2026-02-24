@@ -7,7 +7,7 @@ import Link from './Link.astro';
     <div class="fixed bottom-0 h-full w-full" style="overflow-x: clip; overflow-y: visible;">
         <div class="absolute inset-0 bg-primary" style="clip-path: polygon(0% 0, 100% 0%, 100% 100%, 0 100%);"></div>
         <footer class="relative h-full flex flex-col items-center justify-between pt-16 pb-4 px-(--section-padding-x)">
-            <div id="contact" class="contact-section flex-1 flex items-center justify-center w-full">
+            <div id="contact" class="contact-section flex-1 flex items-center justify-center w-full footer-content">
                 <div class="contact-content-wrapper">
                     <div class="contact-links-container">
                         <p class="consultation-label text-primary-foreground! border bg-muted/10 rounded p-2">
@@ -29,7 +29,7 @@ import Link from './Link.astro';
                 </div>
             </div>
             
-            <div class="flex gap-2 flex-wrap justify-center items-center">
+            <div class="flex gap-2 flex-wrap justify-center items-center footer-content">
                 <p class="text-center text-primary-foreground!">
                     © All rights are reserved by the team of Venus BuildWorks and it's owner Iqbal Masih. {new Date().getFullYear()}
                 </p>
@@ -126,6 +126,25 @@ import Link from './Link.astro';
         .consultation-label {
             left: -4.5em;
             top: -2.5em;
+        }
+    }
+
+    .footer-content {
+        opacity: 0;
+        animation: footer-reveal linear both;
+        animation-timeline: scroll(root);
+        animation-range: 150vh 160vh;
+    }
+
+    @keyframes footer-reveal {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @supports not (animation-timeline: scroll()) {
+        .footer-content {
+            opacity: 1;
         }
     }
 </style>

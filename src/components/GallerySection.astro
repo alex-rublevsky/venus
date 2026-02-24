@@ -63,11 +63,34 @@ const {
 </dialog>
 
 <script>
+    import { spring } from 'motion';
+
     const lightbox = document.getElementById('lightbox') as HTMLDialogElement;
     const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
     const galleryButtons = document.querySelectorAll('.gallery-image-button');
     
     let currentThumbnailImg: HTMLImageElement | null = null;
+
+    // Generate spring animation and inject CSS
+    const springString = spring(0.27, 0.26).toString();
+    const springMatch = springString.match(/^(\d+(?:\.\d+)?m?s)\s+(.+)$/);
+    const springDuration = springMatch ? springMatch[1] : '750ms';
+    const springEasing = springMatch ? springMatch[2] : 'ease-out';
+
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+        ::view-transition-group(gallery-image) {
+            animation-duration: ${springDuration} !important;
+            animation-timing-function: ${springEasing} !important;
+        }
+        
+        ::view-transition-old(gallery-image),
+        ::view-transition-new(gallery-image) {
+            animation-duration: ${springDuration} !important;
+            animation-timing-function: ${springEasing} !important;
+        }
+    `;
+    document.head.appendChild(styleElement);
 
     function openLightbox(buttonElement: HTMLButtonElement) {
         const thumbnailImg = buttonElement.querySelector('img.gallery-thumbnail') as HTMLImageElement;
@@ -154,6 +177,7 @@ const {
         align-items: center;
         justify-content: center;
         overscroll-behavior: contain;
+        cursor: pointer;
     }
 
     .lightbox-dialog::backdrop {
@@ -171,6 +195,7 @@ const {
         height: auto;
         object-fit: contain;
         cursor: pointer;
+        border-radius: var(--radius-lg);
     }
 
     .gallery-image-button {

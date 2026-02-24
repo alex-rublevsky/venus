@@ -12,8 +12,8 @@ const [housesCategory, decksCategory, fencesCategory] = galleryCategories;
 
 <Layout>
 	<PerspectiveTransitionWrapper>
-		<HeroSection slot="section1"/>
-		<GallerySection slot="section2" categories={[housesCategory]} showTitle={true} categoryIndexOffset={0} />
+		<HeroSection slot="hero"/>
+		<GallerySection slot="content" categories={[housesCategory]} showTitle={true} categoryIndexOffset={0} />
 	</PerspectiveTransitionWrapper>
 	<GallerySection categories={[decksCategory]} showTitle={true} categoryIndexOffset={1} />
 	<GallerySection categories={[fencesCategory]} showTitle={true} categoryIndexOffset={2} />

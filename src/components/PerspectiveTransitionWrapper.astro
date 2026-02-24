@@ -1,22 +1,29 @@
 ---
 ---
 
-<div class="perspective-transition-container" data-perspective-container>
-    <div class="perspective-section-1" data-perspective-section="1">
-        <slot name="section1" />
+<div class="perspective-wrapper">
+    <div class="perspective-hero-zone" data-perspective-hero>
+        <div class="perspective-hero" data-perspective-section="1">
+            <slot name="hero" />
+        </div>
     </div>
-    <div class="perspective-section-2" data-perspective-section="2">
-        <slot name="section2" />
+
+    <div class="perspective-content" data-perspective-section="2">
+        <slot name="content" />
     </div>
 </div>
 
 <style>
-    .perspective-transition-container {
-        position: relative;
-        height: 250vh;
+    .perspective-wrapper {
+        margin-bottom: -100vh;
     }
 
-    .perspective-section-1 {
+    .perspective-hero-zone {
+        position: relative;
+        height: 200vh;
+    }
+
+    .perspective-hero {
         position: sticky;
         top: 0;
         height: 100vh;
@@ -24,42 +31,30 @@
         z-index: 1;
         will-change: transform;
         transform-origin: center center;
-        animation: section1-perspective linear forwards;
+        animation: hero-perspective linear forwards;
         animation-timeline: scroll(root);
-        animation-range: 0vh 150vh;
+        animation-range: 0vh 100vh;
     }
 
-    .perspective-section-1 > :global(section) {
+    .perspective-hero > :global(section) {
         height: 100%;
         width: 100%;
     }
 
-    .perspective-section-2 {
-        position: absolute;
-        top: 150vh;
-        left: 0;
-        right: 0;
+    .perspective-content {
+        position: relative;
         width: 100%;
-        min-height: 100vh;
         z-index: 2;
+        margin-top: 0vh;
         will-change: transform;
-        transform-origin: center center;
-        display: flex;
-        align-items: center;
-        animation: section2-perspective linear forwards;
+        transform-origin: center top;
+        transform: scale(0.8) rotate(5deg) translateY(-100vh);
+        animation: content-perspective linear forwards;
         animation-timeline: scroll(root);
-        animation-range: 0vh 150vh;
-    }
-    
-    .perspective-section-2 > :global(section) {
-        padding-bottom: 0 !important;
-        min-height: 100vh;
-        width: 100%;
-        display: flex;
-        align-items: center;
+        animation-range: 30vh 100vh;
     }
 
-    @keyframes section1-perspective {
+    @keyframes hero-perspective {
         from {
             transform: scale(1) rotate(0deg);
         }
@@ -68,56 +63,57 @@
         }
     }
 
-    @keyframes section2-perspective {
+    @keyframes content-perspective {
         from {
-            transform: scale(0.8) rotate(5deg);
+            transform: scale(0.8) rotate(5deg) translateY(-100vh);
         }
         to {
-            transform: scale(1) rotate(0deg);
+            transform: scale(1) rotate(0deg) translateY(-100vh);
         }
     }
 
     /* Fallback for browsers without scroll-driven animations support */
     @supports not (animation-timeline: scroll()) {
-        .perspective-section-1 {
+        .perspective-hero {
             animation: none;
         }
         
-        .perspective-section-2 {
+        .perspective-content {
             animation: none;
         }
     }
 </style>
 
 <script>
+    // Prevent scroll restoration on page load. fixes the first section being in last frame on refresh
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     // Fallback for browsers without scroll-driven animations support
     if (!CSS.supports('animation-timeline: scroll()')) {
-        const container = document.querySelector('[data-perspective-container]');
-        const section1 = document.querySelector('[data-perspective-section="1"]');
-        const section2 = document.querySelector('[data-perspective-section="2"]');
+        const hero = document.querySelector('[data-perspective-section="1"]') as HTMLElement;
+        const content = document.querySelector('[data-perspective-section="2"]') as HTMLElement;
         
-        if (container && section1 && section2) {
+        if (hero && content) {
             let ticking = false;
             
             const updateTransforms = () => {
                 const scrollTop = window.scrollY;
-                const containerTop = container.offsetTop;
-                const containerHeight = container.offsetHeight;
                 const viewportHeight = window.innerHeight;
                 
-                // Calculate scroll progress (0 to 1) based on container position
-                // Animation runs from when container enters viewport to 150vh of scroll
-                const scrollProgress = Math.max(0, Math.min(1, scrollTop / (150 * viewportHeight / 100)));
+                // Hero animation: 0 to 100vh
+                const heroProgress = Math.max(0, Math.min(1, scrollTop / viewportHeight));
+                const scale1 = 1 - (heroProgress * 0.2);
+                const rotate1 = heroProgress * -5;
+                hero.style.transform = `scale(${scale1}) rotate(${rotate1}deg)`;
                 
-                // Section 1: scale 1 -> 0.8, rotate 0 -> -5deg
-                const scale1 = 1 - (scrollProgress * 0.2);
-                const rotate1 = scrollProgress * -5;
-                section1.style.transform = `scale(${scale1}) rotate(${rotate1}deg)`;
-                
-                // Section 2: scale 0.8 -> 1, rotate 5 -> 0deg
-                const scale2 = 0.8 + (scrollProgress * 0.2);
-                const rotate2 = 5 - (scrollProgress * 5);
-                section2.style.transform = `scale(${scale2}) rotate(${rotate2}deg)`;
+                // Content animation: 30vh to 100vh (delayed start)
+                const contentProgress = Math.max(0, Math.min(1, (scrollTop - (0.3 * viewportHeight)) / (0.7 * viewportHeight)));
+                const scale2 = 0.8 + (contentProgress * 0.2);
+                const rotate2 = 5 - (contentProgress * 5);
+                content.style.transform = `scale(${scale2}) rotate(${rotate2}deg) translateY(-100vh)`;
                 
                 ticking = false;
             };
