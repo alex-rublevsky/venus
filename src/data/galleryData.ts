@@ -1,6 +1,7 @@
 export const galleryCategories = [
 	{
 		title: "House Renovation",
+		description: "We do full remodels but we also do repairs. We do kitchens, bathrooms, basements, interior and exterior remodeling, flooring, tile, drywall, painting, framing, structural modifications, doors and windows, decks, concrete work, electrical, plumbing.",
 		images: [
 			{ src: "house-renovations/1.webp", alt: "House renovation" },
 			{ src: "house-renovations/4.webp", alt: "House renovation" },
@@ -15,6 +16,7 @@ export const galleryCategories = [
 	},
 	{
 		title: "Decks",
+		description: "Custom deck construction, repairs, and refinishing. Built to last with quality materials and expert craftsmanship.",
 		images: [
 			{ src: "decks/13.webp", alt: "Custom deck construction" },
 			{ src: "decks/4.webp", alt: "Custom deck construction" },
@@ -36,6 +38,7 @@ export const galleryCategories = [
 	},
 	{
 		title: "Fences",
+		description: "Professional fence installation and repair services. Privacy, security, and beautiful boundaries for your property.",
 		images: [
 			{ src: "fences/1.webp", alt: "Fence installation" },
 			{ src: "fences/2.webp", alt: "Fence installation" },

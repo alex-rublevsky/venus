@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { galleryCategories } from '../data/galleryData.ts';
+import ScrollTextReveal from './ScrollTextReveal';
 
 interface Props {
     categories?: typeof galleryCategories;
@@ -26,6 +27,9 @@ const {
                         {category.title}
                     </h2>
                 )}
+                <div class="mb-8">
+                    <ScrollTextReveal paragraph={category.description} client:load />
+                </div>
                 <div class="columns-2 md:columns-3 lg:columns-4 gap-4">
                     {category.images.slice(0, maxImagesPerCategory).map((image, index) => (
                         <div class="mb-4 break-inside-avoid">
