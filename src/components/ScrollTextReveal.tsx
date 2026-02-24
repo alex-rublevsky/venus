@@ -1,15 +1,36 @@
 import { motion, useScroll, useTransform } from 'motion/react';
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 interface ScrollTextRevealProps {
   paragraph: string;
+  scrollOffset?: [string, string];
+  insidePerspectiveWrapper?: boolean;
 }
 
-export default function ScrollTextReveal({ paragraph }: ScrollTextRevealProps) {
+export default function ScrollTextReveal({ 
+  paragraph, 
+  scrollOffset = ["start 0.9", "start 0.65"],
+  insidePerspectiveWrapper = false
+}: ScrollTextRevealProps) {
   const container = useRef<HTMLParagraphElement>(null);
+  const [adjustedOffset, setAdjustedOffset] = useState(scrollOffset);
+
+  useEffect(() => {
+    if (insidePerspectiveWrapper && container.current) {
+      // The perspective wrapper applies:
+      // - translateY(-100vh): shifts content up by 1 viewport
+      // - scale(0.8 -> 1.0): affects visual size/position during scroll
+      // - rotate(5deg -> 0deg): minor visual offset
+      // 
+      // Compensation: Add ~0.8 to base offsets to account for -100vh transform
+      // (slightly less than 1.0 due to scale effects making content appear "closer")
+      setAdjustedOffset(["start 1.7", "start 1.45"]);
+    }
+  }, [insidePerspectiveWrapper]);
+
   const { scrollYProgress } = useScroll({
     target: container,
-    offset: ["start 0.8", "start 0.15"]
+    offset: adjustedOffset
   });
 
   const words = paragraph.split(" ");

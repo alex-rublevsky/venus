@@ -9,6 +9,7 @@ interface Props {
     showTitle?: boolean;
     maxImagesPerCategory?: number;
     categoryIndexOffset?: number;
+    insidePerspectiveWrapper?: boolean;
 }
 
 const { 
@@ -16,7 +17,8 @@ const {
     baseUrl = "https://assets.venusconstructiongroup.ca/",
     showTitle = true,
     maxImagesPerCategory = Infinity,
-    categoryIndexOffset = 0
+    categoryIndexOffset = 0,
+    insidePerspectiveWrapper = false
 } = Astro.props;
 ---
 
@@ -30,7 +32,11 @@ const {
                     </h2>
                 )}
                 <div class="mb-8">
-                    <ScrollTextReveal paragraph={category.description} client:load />
+                    <ScrollTextReveal 
+                        paragraph={category.description} 
+                        insidePerspectiveWrapper={insidePerspectiveWrapper}
+                        client:load 
+                    />
                 </div>
                 <div class="columns-2 md:columns-3 lg:columns-4 gap-4">
                     {category.images.slice(0, maxImagesPerCategory).map((image, index) => (
@@ -204,6 +210,9 @@ const {
 
     .gallery-thumbnail {
         display: block;
+
+    } ::after {
+        transform: scale(0.98);
     }
 </style>
 
