@@ -6,12 +6,12 @@ export const galleryCategories = [
 			{ src: "house-renovations/1.webp", alt: "House renovation" },
 			{ src: "house-renovations/4.webp", alt: "House renovation" },
 			{ src: "house-renovations/5.webp", alt: "House renovation" },
+			{ src: "house-renovations/10.webp", alt: "Floor renovation detail" },
+
 			{ src: "house-renovations/12.webp", alt: "House renovation" },
 			{ src: "house-renovations/19.webp", alt: "House renovation" },
 			{ src: "house-renovations/13.webp", alt: "House renovation" },
-			// { src: "house-renovation/7.webp", alt: "House renovation" },
-			// { src: "house-renovation/8.webp", alt: "House renovation" },
-			//{ src: "floor-2.webp", alt: "Floor renovation detail" },
+			{ src: "house-renovations/20.webp", alt: "House renovation" },
 		]
 	},
 	{
@@ -44,8 +44,10 @@ export const galleryCategories = [
 			{ src: "fences/2.webp", alt: "Fence installation" },
 			{ src: "fences/3.webp", alt: "Fence installation" },
 			{ src: "fences/4.webp", alt: "Fence installation" },
-			// { src: "fences/5.webp", alt: "Fence installation" },
-			// { src: "fences/6.webp", alt: "Fence installation" },
+			{ src: "fences/5.webp", alt: "Fence installation" },
+			{ src: "fences/6.webp", alt: "Fence installation" },
+			{ src: "fences/21.webp", alt: "Fence installation" },
+			{ src: "fences/22.webp", alt: "Fence installation" },
 			// { src: "fences/7.webp", alt: "Fence installation" },
 			// { src: "fences/8.webp", alt: "Fence installation" },
 			// { src: "fences/9.webp", alt: "Fence installation" },

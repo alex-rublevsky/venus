@@ -4,11 +4,19 @@ import HeroSection from '../components/Hero.astro';
 import TestimonialsSection from '../components/TestimonialsSection.astro';
 import WoodDeckSection from '../components/WoodDeckSection.astro';
 import Layout from '../layouts/Layout.astro';
+import PerspectiveTransitionWrapper from '../components/PerspectiveTransitionWrapper.astro';
+import { galleryCategories } from '../data/galleryData.ts';
+
+const [housesCategory, decksCategory, fencesCategory] = galleryCategories;
 ---
 
 <Layout>
-	<HeroSection/>
-	<GallerySection/>
+	<PerspectiveTransitionWrapper>
+		<HeroSection slot="section1"/>
+		<GallerySection slot="section2" categories={[housesCategory]} showTitle={true} categoryIndexOffset={0} />
+	</PerspectiveTransitionWrapper>
+	<GallerySection categories={[decksCategory]} showTitle={true} categoryIndexOffset={1} />
+	<GallerySection categories={[fencesCategory]} showTitle={true} categoryIndexOffset={2} />
 	<TestimonialsSection/>
 	<WoodDeckSection/>
 </Layout>

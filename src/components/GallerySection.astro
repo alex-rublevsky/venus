@@ -8,20 +8,22 @@ interface Props {
     baseUrl?: string;
     showTitle?: boolean;
     maxImagesPerCategory?: number;
+    categoryIndexOffset?: number;
 }
 
 const { 
     categories = galleryCategories, 
     baseUrl = "https://assets.venusconstructiongroup.ca/",
     showTitle = true,
-    maxImagesPerCategory = 6
+    maxImagesPerCategory = Infinity,
+    categoryIndexOffset = 0
 } = Astro.props;
 ---
 
-<section id="gallery" class="py-16 px-4 md:px-8 lg:px-16">
-    <div class="max-w-7xl mx-auto space-y-16">
+<section id="gallery" class="gallery-section py-16 px-4 md:px-8 lg:px-16">
+    <div class="max-w-7xl mx-auto space-y-16 w-full">
         {categories.map((category, categoryIndex) => (
-            <div class="category-section">
+            <div class="category-section" id={`gallery-${categoryIndexOffset + categoryIndex}`}>
                 {showTitle && (
                     <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">
                         {category.title}
@@ -45,7 +47,7 @@ const {
                                     height={1000} 
                                     class="w-full h-auto hover:scale-105 transition-transform duration-300 gallery-thumbnail"
                                     data-splash-critical={categoryIndex === 0 ? "" : undefined}
-                                    loading={categoryIndex === 0 ? "eager" : "lazy"}
+                                    loading="eager"
                                 />
                             </button>
                         </div>
@@ -177,6 +179,16 @@ const {
 
     .gallery-thumbnail {
         display: block;
+    }
+</style>
+
+<style>
+    .gallery-section {
+        padding-bottom: 2rem !important;
+    }
+    
+    .category-section {
+        scroll-margin-top: 4rem;
     }
 </style>
 
