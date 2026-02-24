@@ -6,7 +6,6 @@ import logoSvg from '../data/logotype.svg?raw';
 <div class="hero-outer-wrapper">
     <section id="hero" class="hero-section">
         <div class="hero-sticky-wrapper">
-            <p>Hamilton, ON</p> 
             <div class="hero-content">
                
                
@@ -63,19 +62,6 @@ import logoSvg from '../data/logotype.svg?raw';
         padding-bottom: 2rem;
         width: 100%;
         z-index: 10;
-    }
-    
-    /* Location text entrance animation */
-    .hero-sticky-wrapper > p {
-        position: absolute;
-        top: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 0;
-    }
-    
-    html.splash-revealed .hero-sticky-wrapper > p {
-        animation: fade-in-down 0.6s ease-out 0.7s forwards;
     }
 
     .hero-content {

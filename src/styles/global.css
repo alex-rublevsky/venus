@@ -76,10 +76,10 @@
 	/* --destructive: oklch(0.6368 0.2078 25.33);
 	--destructive-foreground: oklch(0.9779 0.0112 var(--hue)); */
 
-	/* --border: oklch(0.8895 0.1033 var(--beige-hue) / 0.5);
-	--input: oklch(0.8895 0.1033 var(--beige-hue));
+	 --border: oklch(0.6977 0.1133 263.26 / 0.3);
+	/* --input: oklch(0.8895 0.1033 var(--beige-hue));
 	
-	--ring: 0 0% 3.9%; */
+	--ring: 0 0% 3.9%;  */
 
 	--radius: 1rem;
 	--sidebar-background: 0 0% 98%;

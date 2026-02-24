@@ -1,0 +1,27 @@
+---
+import NavLinks from './NavLinks.astro';
+---
+
+<div class="bottom-bar" data-bottom-bar>
+  <NavLinks variant="pill" />
+</div>
+
+<style>
+  .bottom-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: fit-content;
+    max-width: calc(100vw - 40px);
+    transition: opacity 0.3s ease-out;
+  }
+
+  /* Hide on desktop, show only on mobile */
+  @media (min-width: 769px) {
+    .bottom-bar {
+      display: none;
+    }
+  }
+</style>
