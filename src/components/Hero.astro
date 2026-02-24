@@ -29,6 +29,14 @@ import logoSvg from '../data/logotype.svg?raw';
                     
                     <div class="logo-container">
                         <div class="logotype" data-hero-logotype set:html={logoSvg} />
+                        <div class="logo-wood-texture">
+                            <img 
+                                src={baseUrl + "misc/wood-logo.webp"} 
+                                alt="" 
+                                class="wood-texture-img"
+                                aria-hidden="true"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -100,6 +108,38 @@ import logoSvg from '../data/logotype.svg?raw';
     
     .logotype :global(svg path) {
         fill: currentColor;
+    }
+
+    .logo-wood-texture {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        opacity: 0;
+        mask-image: var(--logo-mask);
+        -webkit-mask-image: var(--logo-mask);
+        mask-size: 100% 100%;
+        -webkit-mask-size: 100% 100%;
+        mask-repeat: no-repeat;
+        -webkit-mask-repeat: no-repeat;
+        mask-position: center;
+        -webkit-mask-position: center;
+    }
+
+    .wood-texture-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* Enable wood texture fade-in animation after nail lands */
+    html.splash-revealed .logo-wood-texture.nail-landed {
+        animation: wood-logo-fade-in ease-out forwards;
+        animation-timeline: --hero-timeline;
+        animation-range: contain 58% contain 80%;
     }
 
     /* Hammer and Nail Animation */
@@ -244,6 +284,15 @@ import logoSvg from '../data/logotype.svg?raw';
         }
     }
 
+    @keyframes wood-logo-fade-in {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
     /* Fallback for browsers without view() support */
     @supports not (animation-timeline: --hero-timeline) {
         .nail-sticking {
@@ -281,6 +330,28 @@ import logoSvg from '../data/logotype.svg?raw';
         observer.observe(heroSection);
     }
     
+    // Create mask from SVG logo
+    const logotype = document.querySelector('.logotype');
+    const woodTexture = document.querySelector('.logo-wood-texture');
+    
+    if (logotype && woodTexture) {
+        const svg = logotype.querySelector('svg');
+        if (svg) {
+            // Clone the SVG and convert to data URL for mask
+            const svgClone = svg.cloneNode(true);
+            // Make all paths black for mask
+            svgClone.querySelectorAll('path').forEach(path => {
+                path.setAttribute('fill', 'black');
+            });
+            const svgString = new XMLSerializer().serializeToString(svgClone);
+            const svgBase64 = btoa(unescape(encodeURIComponent(svgString)));
+            const maskUrl = `url(data:image/svg+xml;base64,${svgBase64})`;
+            
+            // Set the CSS variable for mask
+            woodTexture.style.setProperty('--logo-mask', maskUrl);
+        }
+    }
+    
     // Enable scroll animations after nail finishes falling
     const nail = document.querySelector('.nail-sticking');
     const hammer = document.querySelector('.hammer-flying');
@@ -292,6 +363,10 @@ import logoSvg from '../data/logotype.svg?raw';
                 // Also enable hammer scroll animation
                 if (hammer) {
                     hammer.classList.add('nail-landed');
+                }
+                // Enable wood texture fade-in animation
+                if (woodTexture) {
+                    woodTexture.classList.add('nail-landed');
                 }
                 nail.removeEventListener('animationend', handler);
             }
