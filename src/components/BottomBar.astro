@@ -18,6 +18,12 @@ import NavLinks from './NavLinks.astro';
     transition: opacity 0.3s ease-out;
   }
 
+  /* Hidden state for wood deck section */
+  .bottom-bar.nav-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   /* Hide on desktop, show only on mobile */
   @media (min-width: 769px) {
     .bottom-bar {

@@ -37,27 +37,25 @@ import NavLinks from './NavLinks.astro';
     background-color: transparent;
     z-index: 1000;
     padding: 0.75rem 1rem;
-    transition: opacity 0.3s ease-out;
+    transition: opacity 0.3s ease-out, transform 0.5s ease-out;
     
     /* Initially hidden for splash reveal */
     opacity: 0;
     transform: translateY(-10px);
   }
   
-  /* Animate in after splash reveals */
+  /* Reveal after splash - use transition instead of animation */
   html.splash-revealed .top-bar {
-    animation: fade-in-down 0.5s ease-out 0.4s forwards;
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.4s;
   }
-  
-  @keyframes fade-in-down {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+
+  /* Hidden state for wood deck section */
+  .top-bar.nav-hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+    transition-delay: 0s;
   }
 
   .top-bar-container {

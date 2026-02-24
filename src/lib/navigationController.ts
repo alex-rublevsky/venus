@@ -123,7 +123,22 @@ function initWoodDeckVisibility() {
   const bottomBar = document.querySelector('[data-bottom-bar]') as HTMLElement;
   const woodDeck = document.querySelector('#wood-deck');
   
-  if (!woodDeck) return;
+  if (!woodDeck) {
+    console.warn('Wood deck section not found');
+    return;
+  }
+
+  if (!topBar) {
+    console.warn('Top bar not found');
+  }
+
+  if (!bottomBar) {
+    console.warn('Bottom bar not found');
+  }
+
+  const bars = [topBar, bottomBar].filter(Boolean) as HTMLElement[];
+
+
 
   const visibilityObserver = new IntersectionObserver(
     (entries) => {
@@ -131,10 +146,11 @@ function initWoodDeckVisibility() {
         const rect = entry.boundingClientRect;
         const shouldHide = entry.isIntersecting || rect.top < 0;
         
-        [topBar, bottomBar].forEach(bar => {
-          if (bar) {
-            bar.style.opacity = shouldHide ? '0' : '1';
-            bar.style.pointerEvents = shouldHide ? 'none' : 'auto';
+        bars.forEach(bar => {
+          if (shouldHide) {
+            bar.classList.add('nav-hidden');
+          } else {
+            bar.classList.remove('nav-hidden');
           }
         });
       });
@@ -151,5 +167,6 @@ function initWoodDeckVisibility() {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initNavigationController);
 } else {
-  initNavigationController();
+  // Ensure DOM is fully parsed before initializing
+  setTimeout(initNavigationController, 0);
 }
