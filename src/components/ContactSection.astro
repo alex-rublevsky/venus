@@ -1,13 +1,13 @@
 ---
-import Button from './Button.astro';
 import Icon from './Icon.astro';
+const baseUrl = "https://pub-92598708a02144628d401b04dd2b81c7.r2.dev/";
 ---
 
-<section id="contact" class="">
+<section id="contact" class="contact-section">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex flex-col items-start gap-4 ">
 			<h2>Let's Work Together</h2>
-			<Button text="Say Hello" /></div>
+			<!-- <Button text="Say Hello" /></div> -->
 	
 		<div class="flex flex-col gap-6">
 			<a
@@ -16,7 +16,7 @@ import Icon from './Icon.astro';
 			>
 				<Icon name="phone" className="w-6 h-6" size={24} />
 				
-				<span>289-941-5033</span>
+				<span>416-828-2380</span>
 			</a>
 			<a
 				href="mailto:venusfence.1@gmail.com"
@@ -37,3 +37,9 @@ import Icon from './Icon.astro';
 		</div>
 	</div>
 </section>
+
+<style>
+	.contact-section {
+		padding: 80px 0;
+	}
+</style>

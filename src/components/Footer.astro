@@ -1,24 +1,132 @@
 ---
+import Link from './Link.astro';
+const baseUrl = "https://pub-92598708a02144628d401b04dd2b81c7.r2.dev/";
 ---
-<footer class="flex flex-col items-start gap-10 pt-16 pb-38 md:pb-16 px-(--section-padding-x)">
-  
-    {/* TODO: set the year to a reactive value */}
-    <div class="flex gap-2 flex-wrap justify-center items-center">
-        <p class="text-center">
-            {" "}
-            © All rights are reserved by the team of Venus BuildWorks and it’s owner Iqbal Masih. {new Date().getFullYear()}
-        </p>
-        {/* TODO: add link www.rublevsky.studio */}
-        <p class="text-center">
-            Like the site?{" "}
-            <a
-                href="https://www.rublevsky.studio"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-accent!"
-            >
-                Contact the developer{" "}
-            </a>
-        </p>
+<div 
+    class="relative h-full footer-wrapper"
+>
+    <div class="fixed bottom-0 h-full w-full" style="overflow-x: clip; overflow-y: visible;">
+        <div class="absolute inset-0 bg-primary" style="clip-path: polygon(0% 0, 100% 0%, 100% 100%, 0 100%);"></div>
+        <footer class="relative h-full flex flex-col items-center justify-between pt-16 pb-4 px-(--section-padding-x)">
+            <div id="contact" class="contact-section flex-1 flex items-center justify-center w-full">
+                <div class="contact-content-wrapper">
+                    <div class="contact-links-container">
+                        <p class="consultation-label text-primary-foreground! border bg-muted/10 rounded p-2">
+                            Book a Free Consultation
+                        </p>
+                        <Link
+                            href="tel:+14168282380"
+                            class="text-secondary! text-3xl sm:text-4xl lg:text-5xl text-left block"
+                        >
+                            +1 416 828 2380
+                        </Link>
+                        <Link
+                            href="mailto:venusfence.1@gmail.com"
+                            class="text-secondary! text-3xl sm:text-4xl lg:text-5xl text-left block"
+                        >
+                            venusfence.1@gmail.com
+                        </Link>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-2 flex-wrap justify-center items-center">
+                <p class="text-center text-primary-foreground!">
+                    © All rights are reserved by the team of Venus BuildWorks and it's owner Iqbal Masih. {new Date().getFullYear()}
+                </p>
+                <p class="text-center text-primary-foreground!">
+                    Like the site?{" "}
+                    <Link
+                        href="https://www.rublevsky.studio"
+                        class="text-secondary!"
+                       
+                      
+                      
+                    >
+                        Contact the developer{" "}
+                    </Link>
+                </p>
+            </div>
+        </footer>
     </div>
-</footer>
+</div>
+
+<style>
+    .footer-wrapper {
+        overflow: visible !important;
+    }
+
+    footer {
+        position: relative;
+        overflow: visible !important;
+    }
+
+    .contact-content-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .contact-links-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: left;
+    }
+
+    .consultation-label {
+        position: static;
+        transform: none;
+        white-space: nowrap;
+        width: fit-content;
+        display: inline-block;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .consultation-label:hover {
+        transform: scale(1.01) rotate(1deg);
+    }
+
+    .consultation-label:active {
+        transform: scale(0.99);
+    }
+
+    @media (min-width: 640px) {
+        .contact-links-container {
+            margin-top: 80px;
+        }
+        
+        .consultation-label {
+            position: absolute;
+            left: -4.5em;
+            top: -2.5em;
+            transform: rotate(-10deg);
+            transform-origin: center;
+        }
+
+        .consultation-label:hover {
+            transform: scale(1.01) rotate(-9deg);
+        }
+
+        .consultation-label:active {
+            transform: scale(0.99) rotate(-10deg);
+        }
+    }
+
+    @media (min-width: 768px) {
+        .consultation-label {
+            left: -4.5em;
+            top: -2.5em;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .consultation-label {
+            left: -4.5em;
+            top: -2.5em;
+        }
+    }
+</style>

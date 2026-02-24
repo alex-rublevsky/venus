@@ -5,10 +5,9 @@
   <div class="bubble active"></div>
   <div class="bubble hover"></div>
   <nav class="nav">
-    <a class="active" href="#hero">Home</a>
-    <a href="#gallery">Gallery</a>
-    <a href="#testimonials">Testimonials</a>
-    <a href="#contact">Contact</a>
+    <a class="active" href="#gallery-0">House Renovation</a>
+    <a href="#gallery-1">Decks</a>
+    <a href="#gallery-2">Fences</a>
   </nav>
 </div>
 
@@ -26,6 +25,8 @@
     z-index: 1000;
     box-shadow: inset 10px 0 10px var(--foreground);
     background: linear-gradient(0deg, color-mix(in oklch, var(--foreground) 95%, var(--background) 5%), color-mix(in oklch, var(--foreground) 85%, var(--background) 15%));
+    transition: opacity 0.3s ease-out;
+    
     &:after {
       content: "";
       display: block;
@@ -49,7 +50,7 @@
       z-index: 10;
       position: relative;
       display: inline-block;
-      padding: 10px 24px;
+      padding: 0.4rem 1rem;
       color: var(--background);
       text-decoration: none;
       font-size: 0.9rem;
@@ -125,9 +126,9 @@
   const links = document.querySelectorAll(".nav a");
   const sections = new Map();
   let isScrolling = false;
-  let scrollTimeout = null;
-  let updateTimeout = null;
-  let currentActiveLink = null;
+  let scrollTimeout: ReturnType<typeof setTimeout> | undefined;
+  let updateTimeout: ReturnType<typeof setTimeout> | undefined;
+  let currentActiveLink: Element | null = null;
 
   // Build map of links to sections
   links.forEach((link) => {
@@ -141,7 +142,7 @@
   });
 
   // Update active link (prevents unnecessary DOM updates)
-  function setActiveLink(activeLink) {
+  function setActiveLink(activeLink: Element | null) {
     if (currentActiveLink === activeLink) return;
     
     links.forEach((l) => l.classList.remove("active"));
@@ -203,6 +204,40 @@
 
   // Initial update
   updateActiveSection();
+
+  // Hide navbar and socials bar when wood deck section enters viewport
+  const navWrap = document.querySelector('.nav-wrap') as HTMLElement;
+  const socialsBar = document.querySelector('.socials-bar') as HTMLElement;
+  const woodDeck = document.querySelector('#wood-deck');
+  
+  if (navWrap && socialsBar && woodDeck) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const rect = entry.boundingClientRect;
+          
+          // Show navbar only if section is below the trigger zone (not yet reached)
+          // Hide if section is intersecting or has scrolled past (above viewport)
+          if (entry.isIntersecting || rect.top < 0) {
+            navWrap.style.opacity = '0';
+            navWrap.style.pointerEvents = 'none';
+            socialsBar.style.opacity = '0';
+            socialsBar.style.pointerEvents = 'none';
+          } else {
+            navWrap.style.opacity = '1';
+            navWrap.style.pointerEvents = 'auto';
+            socialsBar.style.opacity = '1';
+            socialsBar.style.pointerEvents = 'auto';
+          }
+        });
+      },
+      {
+        rootMargin: '0px 0px -50% 0px',
+      }
+    );
+    
+    observer.observe(woodDeck);
+  }
 
   // Handle link clicks
   links.forEach((link) => {

@@ -1,0 +1,180 @@
+---
+import Union from '../data/Union.svg?raw';
+import Union1 from '../data/Union-1.svg?raw';
+import Union2 from '../data/Union-2.svg?raw';
+import Union3 from '../data/Union-3.svg?raw';
+import Union4 from '../data/Union-4.svg?raw';
+
+const woodPlanks = [Union, Union1, Union2, Union3, Union4];
+---
+
+<section id="wood-deck" class="wood-deck-section">
+	<div class="wood-deck-container">
+		<div class="wood-row-wrapper">
+			<div class="wood-row" data-row="1" data-direction="right">
+				{Array.from({ length: 15 }).map((_, i) => (
+					<div class="wood-plank" set:html={woodPlanks[(i * 3) % woodPlanks.length]} />
+				))}
+				{Array.from({ length: 15 }).map((_, i) => (
+					<div class="wood-plank" set:html={woodPlanks[(i * 3) % woodPlanks.length]} />
+				))}
+			</div>
+		</div>
+		<div class="wood-row-wrapper">
+			<div class="wood-row" data-row="2" data-direction="left">
+				{Array.from({ length: 15 }).map((_, i) => (
+					<div class="wood-plank" set:html={woodPlanks[(i * 2 + 1) % woodPlanks.length]} />
+				))}
+				{Array.from({ length: 15 }).map((_, i) => (
+					<div class="wood-plank" set:html={woodPlanks[(i * 2 + 1) % woodPlanks.length]} />
+				))}
+			</div>
+		</div>
+		<div class="wood-row-wrapper">
+			<div class="wood-row" data-row="3" data-direction="right">
+				{Array.from({ length: 15 }).map((_, i) => (
+					<div class="wood-plank" set:html={woodPlanks[(i * 4 + 3) % woodPlanks.length]} />
+				))}
+				{Array.from({ length: 15 }).map((_, i) => (
+					<div class="wood-plank" set:html={woodPlanks[(i * 4 + 3) % woodPlanks.length]} />
+				))}
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	(function setupWoodDeckAnimation() {
+		const section = document.querySelector('.wood-deck-section');
+		if (!section) return;
+
+		const rows = section.querySelectorAll<HTMLElement>('.wood-row');
+		if (!rows.length) return;
+
+	const firstPlank = section.querySelector('.wood-plank') as HTMLElement;
+	if (!firstPlank) return;
+	
+	const plankWidth = firstPlank.offsetWidth;
+		const computedStyle = window.getComputedStyle(section.querySelector('.wood-row')!);
+		const gap = parseFloat(computedStyle.gap);
+		const plankTotalWidth = plankWidth + gap;
+		const loopWidth = 15 * plankTotalWidth;
+
+		let lastScrollY = window.scrollY;
+		let isInViewport = false;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					isInViewport = entry.isIntersecting;
+				});
+			},
+			{
+				threshold: 0,
+				rootMargin: '0px'
+			}
+		);
+
+		observer.observe(section);
+
+		const updateAnimation = () => {
+			if (!isInViewport) return;
+
+			const currentScrollY = window.scrollY;
+			const scrollDelta = currentScrollY - lastScrollY;
+			
+			rows.forEach((row) => {
+				const direction = row.getAttribute('data-direction');
+				
+				const currentTransform = row.style.transform || 'translateX(0px)';
+				const match = currentTransform.match(/translateX\(([-\d.]+)px\)/);
+				let currentX = match ? parseFloat(match[1]) : 0;
+				
+				if (direction === 'right') {
+					currentX += scrollDelta * 0.5;
+				} else {
+					currentX -= scrollDelta * 0.5;
+				}
+				
+				while (currentX > 0) currentX -= loopWidth;
+				while (currentX < -loopWidth) currentX += loopWidth;
+				
+				row.style.transform = `translateX(${currentX}px)`;
+			});
+
+			lastScrollY = currentScrollY;
+		};
+
+		window.addEventListener('scroll', updateAnimation, { passive: true });
+	})();
+</script>
+
+<style>
+	.wood-deck-section {
+		overflow: hidden;
+		padding: 4rem 0;
+		background-color: var(--background);
+	}
+
+	.wood-deck-container {
+		display: flex;
+		flex-direction: column;
+		gap: 0.55rem;
+		width: 100%;
+	}
+
+	.wood-row-wrapper {
+		overflow: hidden;
+		width: 100%;
+	}
+
+	.wood-row {
+		display: flex;
+		gap: 0.25rem;
+		width: max-content;
+		will-change: transform;
+		transform: translateX(0);
+	}
+
+	.wood-plank {
+		width: 18.75rem;
+		height: 5.5rem;
+		flex-shrink: 0;
+		position: relative;
+		color: var(--secondary);
+	}
+
+	.wood-plank :global(svg) {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		height: 18.75rem;
+		width: auto;
+		transform: translate(-50%, -50%) rotate(90deg);
+	}
+
+	.wood-plank :global(path) {
+		fill: currentColor;
+	}
+
+	@media (width <= 640px) {
+		.wood-plank {
+			width: 13.75rem;
+			height: 4rem;
+		}
+
+		.wood-plank :global(svg) {
+			height: 13.75rem;
+		}
+
+		.wood-deck-section {
+			padding: 3rem 0;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.wood-row {
+			will-change: auto;
+		}
+	}
+</style>

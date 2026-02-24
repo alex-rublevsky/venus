@@ -1,21 +1,181 @@
 ---
 import { Image } from 'astro:assets';
-const baseUrl = "https://pub-92598708a02144628d401b04dd2b81c7.r2.dev/content/";
-const images = [
-    {
-        src: "grass.webp",
-        alt: "Gallery image"
-    },
-    {
-        src: "deck.webp",
-        alt: "Gallery image"
-    }]
+import { galleryCategories } from '../data/galleryData.ts';
+
+interface Props {
+    categories?: typeof galleryCategories;
+    baseUrl?: string;
+    showTitle?: boolean;
+    maxImagesPerCategory?: number;
+}
+
+const { 
+    categories = galleryCategories, 
+    baseUrl = "https://pub-92598708a02144628d401b04dd2b81c7.r2.dev/",
+    showTitle = true,
+    maxImagesPerCategory = 6
+} = Astro.props;
 ---
 
-<section id="gallery">
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" >
-        {images.map((image) => (
-            <Image src={baseUrl + image.src} alt={image.alt} width={1000} height={1000} class="w-full h-full object-cover" />
+<section id="gallery" class="py-16 px-4 md:px-8 lg:px-16">
+    <div class="max-w-7xl mx-auto space-y-16">
+        {categories.map((category) => (
+            <div class="category-section">
+                {showTitle && (
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">
+                        {category.title}
+                    </h2>
+                )}
+                <div class="columns-2 md:columns-3 lg:columns-4 gap-4">
+                    {category.images.slice(0, maxImagesPerCategory).map((image, index) => (
+                        <div class="mb-4 break-inside-avoid">
+                            <button 
+                                class="overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 w-full border-0 p-0 bg-transparent cursor-pointer gallery-image-button"
+                                data-image-src={baseUrl + image.src}
+                                data-image-alt={image.alt}
+                            >
+                                <Image 
+                                    src={baseUrl + image.src} 
+                                    alt={image.alt} 
+                                    width={1000} 
+                                    height={1000} 
+                                    class="w-full h-auto hover:scale-105 transition-transform duration-300 gallery-thumbnail" 
+                                />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
         ))}
     </div>
 </section>
+
+<dialog id="lightbox" class="lightbox-dialog">
+    <img id="lightbox-image" src="" alt="" class="lightbox-image" />
+</dialog>
+
+<script>
+    const lightbox = document.getElementById('lightbox') as HTMLDialogElement;
+    const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
+    const galleryButtons = document.querySelectorAll('.gallery-image-button');
+    
+    let currentThumbnailImg: HTMLImageElement | null = null;
+
+    function openLightbox(buttonElement: HTMLButtonElement) {
+        const thumbnailImg = buttonElement.querySelector('img.gallery-thumbnail') as HTMLImageElement;
+        const imageSrc = buttonElement.getAttribute('data-image-src');
+        const imageAlt = buttonElement.getAttribute('data-image-alt');
+        
+        if (!thumbnailImg || !imageSrc || !imageAlt) return;
+        
+        currentThumbnailImg = thumbnailImg;
+        
+        if (!document.startViewTransition) {
+            lightboxImage.src = imageSrc;
+            lightboxImage.alt = imageAlt;
+            lightbox.showModal();
+            return;
+        }
+
+        thumbnailImg.style.viewTransitionName = 'gallery-image';
+
+        const transition = document.startViewTransition(() => {
+            thumbnailImg.style.viewTransitionName = '';
+            lightboxImage.src = imageSrc;
+            lightboxImage.alt = imageAlt;
+            lightboxImage.style.viewTransitionName = 'gallery-image';
+            lightbox.showModal();
+        });
+
+        transition.finished.finally(() => {
+            lightboxImage.style.viewTransitionName = '';
+        });
+    }
+
+    function closeLightbox() {
+        if (!currentThumbnailImg) {
+            lightbox.close();
+            return;
+        }
+        
+        const thumbnailImg = currentThumbnailImg;
+        
+        if (!document.startViewTransition) {
+            lightbox.close();
+            currentThumbnailImg = null;
+            return;
+        }
+
+        lightboxImage.style.viewTransitionName = 'gallery-image';
+        
+        const transition = document.startViewTransition(() => {
+            lightboxImage.style.viewTransitionName = '';
+            thumbnailImg.style.viewTransitionName = 'gallery-image';
+            lightbox.close();
+        });
+
+        transition.finished.finally(() => {
+            thumbnailImg.style.viewTransitionName = '';
+            currentThumbnailImg = null;
+        });
+    }
+
+    galleryButtons.forEach((button) => {
+        button.addEventListener('click', (e) => {
+            const target = e.currentTarget as HTMLButtonElement;
+            openLightbox(target);
+        });
+    });
+
+    lightbox.addEventListener('click', () => {
+        closeLightbox();
+    });
+</script>
+
+<style>
+    .lightbox-dialog {
+        inset: 0;
+        max-width: 100vw;
+        max-height: 100vh;
+        width: 100vw;
+        height: 100vh;
+        padding: 2rem;
+        border: none;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overscroll-behavior: contain;
+    }
+
+    .lightbox-dialog::backdrop {
+        background-color: rgb(from var(--background) r g b / 0.5);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        overflow: hidden;
+        overscroll-behavior: contain;
+    }
+
+    .lightbox-image {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        cursor: pointer;
+    }
+
+    .gallery-image-button {
+        display: block;
+    }
+
+    .gallery-thumbnail {
+        display: block;
+    }
+</style>
+
+<style is:global>
+    html {
+        scrollbar-gutter: stable;
+    }
+</style>
