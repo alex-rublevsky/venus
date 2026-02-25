@@ -42,7 +42,7 @@ const {
                     {category.images.slice(0, maxImagesPerCategory).map((image, index) => (
                         <div class="mb-4 break-inside-avoid">
                             <button 
-                                class="overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 w-full border-0 p-0 bg-transparent cursor-pointer gallery-image-button"
+                                class={`overflow-hidden rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ease-out w-full border-0 p-0 bg-transparent ${insidePerspectiveWrapper ? 'gallery-image-button-perspective' : 'gallery-image-button'}`}
                                 data-image-src={baseUrl + image.src}
                                 data-image-alt={image.alt}
                             >
@@ -51,7 +51,7 @@ const {
                                     alt={image.alt} 
                                     width={1000} 
                                     height={1000} 
-                                    class="w-full h-auto hover:scale-105 transition-transform duration-300 gallery-thumbnail"
+                                    class="w-full h-auto hover:scale-105 transition-transform duration-300 ease-out gallery-thumbnail"
                                     data-splash-critical={categoryIndex === 0 ? "" : undefined}
                                     loading="eager"
                                 />
@@ -73,7 +73,7 @@ const {
 
     const lightbox = document.getElementById('lightbox') as HTMLDialogElement;
     const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
-    const galleryButtons = document.querySelectorAll('.gallery-image-button');
+    const galleryButtons = document.querySelectorAll('.gallery-image-button, .gallery-image-button-perspective');
     
     let currentThumbnailImg: HTMLImageElement | null = null;
 
@@ -98,6 +98,19 @@ const {
     `;
     document.head.appendChild(styleElement);
 
+    // Custom cursor management
+    let cursorVisible = false;
+
+    function showCustomCursor() {
+        cursorVisible = true;
+        window.dispatchEvent(new CustomEvent('cursor-visibility', { detail: { visible: true } }));
+    }
+
+    function hideCustomCursor() {
+        cursorVisible = false;
+        window.dispatchEvent(new CustomEvent('cursor-visibility', { detail: { visible: false } }));
+    }
+
     function openLightbox(buttonElement: HTMLButtonElement) {
         const thumbnailImg = buttonElement.querySelector('img.gallery-thumbnail') as HTMLImageElement;
         const imageSrc = buttonElement.getAttribute('data-image-src');
@@ -106,6 +119,8 @@ const {
         if (!thumbnailImg || !imageSrc || !imageAlt) return;
         
         currentThumbnailImg = thumbnailImg;
+        
+        hideCustomCursor();
         
         if (!document.startViewTransition) {
             lightboxImage.src = imageSrc;
@@ -162,6 +177,14 @@ const {
             const target = e.currentTarget as HTMLButtonElement;
             openLightbox(target);
         });
+
+        button.addEventListener('mouseenter', () => {
+            showCustomCursor();
+        });
+
+        button.addEventListener('mouseleave', () => {
+            hideCustomCursor();
+        });
     });
 
     lightbox.addEventListener('click', () => {
@@ -206,16 +229,41 @@ const {
 
     .gallery-image-button {
         display: block;
+        cursor: none;
+        animation: appear linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 24%;
         &:active {
-        transform: scale(0.98);
-        transition: transform 0.2s ease-out;
+            transform: scale(0.98);
+            transition: transform 0.2s ease-out;
+        }
     }
-
+    
+    .gallery-image-button-perspective {
+        display: block;
+        cursor: none;
+        animation: appear linear both;
+        animation-timeline: view();
+        animation-range: cover -100vh cover -72vh;
+        &:active {
+            transform: scale(0.98);
+            transition: transform 0.2s ease-out;
+        }
+    }
+    
+    @keyframes appear {
+        from {
+            opacity: 0;
+            scale: 0.5;
+        }
+        to {
+            opacity: 1;
+            scale: 1;
+        }
     }
 
     .gallery-thumbnail {
         display: block;
-
     }
 </style>
 

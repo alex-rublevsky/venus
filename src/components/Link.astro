@@ -56,6 +56,10 @@ const classes = `link group ${!disableAnimation ? 'link-animated' : ''} ${classN
     @media (hover: hover) {
         .link-animated {
             text-decoration: none;
+            &:active {
+                transform: scaleX(0.96);
+                transition: transform 0.2s ease-out;
+            }
         }
         
         .link:hover .link-text-wrapper::before,
