@@ -10,7 +10,7 @@ import react from '@astrojs/react';
 // https://astro.build/config
 export default defineConfig({
   image: {
-    domains: [],
+    domains: ['assets.venusconstructiongroup.ca'],
   },
 
   vite: {

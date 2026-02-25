@@ -21,6 +21,7 @@ const navItems = [
       <a 
         href={item.href} 
         data-nav-link
+        data-text={item.label}
       >
         {item.label}
       </a>
@@ -36,13 +37,16 @@ const navItems = [
 
   /* Pill variant - with bubble effects and background */
   .nav-links-container.pill {
+    font-weight: 450;
     border: 1px solid var(--border);
     border-radius: 500px;
-    box-shadow: inset 10px 0 10px var(--foreground);
+    box-shadow: inset 10px 0 10px var(--muted);
+    backdrop-filter: blur(8px);
+    transition: font-weight 0.3s ease-out;
     background: linear-gradient(
       0deg, 
-      color-mix(in oklch, var(--foreground) 95%, var(--background) 5%), 
-      color-mix(in oklch, var(--foreground) 85%, var(--background) 15%)
+      color-mix(in oklch, var(--background) 25%, var(--background) 25%), 
+      color-mix(in oklch, var(--background) 95%, var(--background) 95%)
     );
     
     &:after {
@@ -53,7 +57,7 @@ const navItems = [
       background: linear-gradient(
         180deg, 
         var(--border), 
-        color-mix(in oklch, var(--foreground) 70%, var(--background) 30%)
+        color-mix(in oklch, var(--primary) 0%, var(--background) 0%)
       );
       border-radius: 500px;
       z-index: -1;
@@ -80,10 +84,11 @@ const navItems = [
     position: relative;
     display: inline-block;
     padding: 0.4rem 1rem;
-    color: var(--background);
+    color: var(--foreground);
     text-decoration: none;
     font-size: 0.9rem;
     white-space: nowrap;
+    text-align: center;
     transition: color 0.4s ease-out;
     
     &:before {
@@ -94,9 +99,22 @@ const navItems = [
       opacity: 0.2;
     }
     
+    &:after {
+      content: attr(data-text);
+      content: attr(data-text) / "";
+      font-weight: 600;
+      height: 0;
+      visibility: hidden;
+      overflow: hidden;
+      user-select: none;
+      pointer-events: none;
+      display: block;
+    }
+    
     &.active {
       anchor-name: --active;
       color: var(--foreground);
+      font-weight: 600;
     }
     
     &:hover:before {
@@ -126,9 +144,9 @@ const navItems = [
       background: linear-gradient(
         180deg, 
         var(--border), 
-        color-mix(in oklch, var(--foreground) 70%, var(--background) 30%)
+        color-mix(in oklch, var(--background) 25%, var(--background) 25%)
       );
-      box-shadow: inset 0 2px 7px color-mix(in oklch, var(--background) 16%, transparent);
+      box-shadow: inset 0 2px 7px color-mix(in oklch, var(--primary) 15%, transparent);
       position-anchor: --nav;
     }
   }
