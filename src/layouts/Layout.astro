@@ -5,17 +5,76 @@ import BottomBar from "../components/BottomBar.astro";
 import SplashLoader from "../components/SplashLoader.tsx";
 import LottieCursor from "../components/LottieCursor";
 import "../styles/global.css";
+
+export interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	noindex?: boolean;
+}
+
+const {
+	title = 'Venus BuildWorks - Professional Construction Services in Ontario',
+	description = 'Venus BuildWorks provides expert construction services in Ontario including custom home building, deck construction, and fence installation. Quality craftsmanship and reliable service.',
+	image = '/og-image.jpg',
+	noindex = false,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(image, Astro.site);
+
+const businessSchema = {
+	"@context": "https://schema.org",
+	"@type": "GeneralContractor",
+	"name": "Venus BuildWorks",
+	"url": Astro.site,
+	"logo": `${Astro.site}logo.svg`,
+	"description": "Professional construction services specializing in custom homes, decks, and fences in Ontario",
+	"telephone": "+1-289-941-5033",
+	"email": "venusfence.1@gmail.com",
+	"address": {
+		"@type": "PostalAddress",
+		"addressCountry": "CA",
+		"addressRegion": "ON"
+	},
+	"areaServed": {
+		"@type": "Place",
+		"name": "Ontario, Canada"
+	},
+	"priceRange": "$$"
+};
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalURL} />
+		
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
+		
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImageURL} />
+		<meta property="og:site_name" content="Venus BuildWorks" />
+		
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageURL} />
+		
+		<script type="application/ld+json" set:html={JSON.stringify(businessSchema)} />
 	</head>
 	
 	<body>
