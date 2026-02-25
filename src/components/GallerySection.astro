@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import { galleryCategories } from '../data/galleryData.ts';
 import ScrollTextReveal from './ScrollTextReveal';
 
@@ -46,11 +45,11 @@ const {
                                 data-image-src={baseUrl + image.src}
                                 data-image-alt={image.alt}
                             >
-                                <Image 
+                                <img 
                                     src={baseUrl + image.src} 
                                     alt={image.alt} 
-                                    width={1000} 
-                                    height={1000} 
+                                    width="1000" 
+                                    height="1000" 
                                     class="w-full h-auto hover:scale-105 transition-transform duration-300 ease-out gallery-thumbnail"
                                     data-splash-critical={categoryIndex === 0 ? "" : undefined}
                                     loading="eager"
