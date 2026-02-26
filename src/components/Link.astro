@@ -55,9 +55,10 @@ const classes = `link group ${!disableAnimation ? 'link-animated' : ''} ${classN
     /* Desktop hover states - Animate underline */
     @media (hover: hover) {
         .link-animated {
+           
             text-decoration: none;
             &:active {
-                transform: scaleX(0.96);
+                transform: scale(0.96);
                 transition: transform 0.2s ease-out;
             }
         }
@@ -66,6 +67,7 @@ const classes = `link group ${!disableAnimation ? 'link-animated' : ''} ${classN
         .link:active .link-text-wrapper::before,
         .link:focus .link-text-wrapper::before {
             transform: scaleX(1);
+           
         }
     }
 

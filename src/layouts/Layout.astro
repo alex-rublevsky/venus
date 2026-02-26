@@ -3,7 +3,6 @@ import Footer from "../components/Footer.astro";
 import TopBar from "../components/TopBar.astro";
 import BottomBar from "../components/BottomBar.astro";
 import SplashLoader from "../components/SplashLoader.tsx";
-import LottieCursor from "../components/LottieCursor";
 import "../styles/global.css";
 
 export interface Props {
@@ -14,8 +13,8 @@ export interface Props {
 }
 
 const {
-	title = 'Venus BuildWorks - Professional Construction Services in Ontario',
-	description = 'Venus BuildWorks provides expert construction services in Ontario including custom home building, deck construction, and fence installation. Quality craftsmanship and reliable service.',
+	title = 'Venus Construction Group - Professional Construction Services in Ontario',
+	description = 'Construction services in Ontario including custom house renovations, deck construction, and fence installation. Quality craftsmanship and reliable service.',
 	image = '/og-image.jpg',
 	noindex = false,
 } = Astro.props;
@@ -26,7 +25,7 @@ const ogImageURL = new URL(image, Astro.site);
 const businessSchema = {
 	"@context": "https://schema.org",
 	"@type": "GeneralContractor",
-	"name": "Venus BuildWorks",
+	"name": "Venus Construction Group",
 	"url": Astro.site,
 	"logo": `${Astro.site}logo.svg`,
 	"description": "Professional construction services specializing in custom homes, decks, and fences in Ontario",
@@ -67,7 +66,7 @@ const businessSchema = {
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={ogImageURL} />
-		<meta property="og:site_name" content="Venus BuildWorks" />
+		<meta property="og:site_name" content="Venus Construction Group" />
 		
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
@@ -78,7 +77,6 @@ const businessSchema = {
 	</head>
 	
 	<body>
-		<LottieCursor isVisible={false} client:load />
 		<SplashLoader client:load />
 		<TopBar />
 		<BottomBar />
@@ -88,7 +86,8 @@ const businessSchema = {
 	<Footer />
 
 	<script>
-		import '../lib/navigationController';
+		import '../lib/customCursor';
+import '../lib/navigationController';
 	</script>
 </html>
 

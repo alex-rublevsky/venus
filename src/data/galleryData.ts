@@ -4,6 +4,7 @@ export const galleryCategories = [
 		description: "We do full remodels but we also do repairs. We do kitchens, bathrooms, basements, interior and exterior remodeling, flooring, tile, drywall, painting, framing, structural modifications, doors and windows, decks, concrete work, electrical, plumbing.",
 		images: [
 			{ src: "house-renovations/1.webp", alt: "House renovation" },
+			{ src: "house-renovations/2.webp", alt: "House renovation" },
 			{ src: "house-renovations/4.webp", alt: "House renovation" },
 			{ src: "house-renovations/5.webp", alt: "House renovation" },
 			{ src: "house-renovations/6.webp", alt: "House renovation" },
