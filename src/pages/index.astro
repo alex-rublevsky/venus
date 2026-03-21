@@ -1,6 +1,7 @@
 ---
 import GallerySection from '../components/GallerySection.astro';
 import HeroSection from '../components/Hero.astro';
+import PartnersSection from '../components/PartnersSection.astro';
 import TestimonialsSection from '../components/TestimonialsSection.astro';
 import WoodDeckSection from '../components/WoodDeckSection.astro';
 import Layout from '../layouts/Layout.astro';
@@ -17,6 +18,7 @@ const [housesCategory, decksCategory, fencesCategory] = galleryCategories;
 	</PerspectiveTransitionWrapper>
 	<GallerySection categories={[decksCategory]} showTitle={true} categoryIndexOffset={1} />
 	<GallerySection categories={[fencesCategory]} showTitle={true} categoryIndexOffset={2} />
+	<PartnersSection/>
 	<TestimonialsSection/>
 	<WoodDeckSection/>
 </Layout>

@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+const baseUrl = "https://assets.venusconstructiongroup.ca/partners/";
+
+const partners = [
+{ src: "ford.svg", alt: "Ford" },
+	{ src: "Saudi-Aramco.webp", alt: "Saudi Aramco Logo" },
+	{ src: "burlington-fence.webp", alt: "Burlington Fence Logo" },
+	{ src: "king-fence.webp", alt: "King Fence Logo" },
+	{ src: "firmfence.webp", alt: "FirmFence Logo" },
+	{ src: "mcfaul.webp", alt: "McFaul Fencing Logo" },
+
+	
+{ src: "roma-fence.svg", alt: "Roma Fence" },
+];
+---
+
+<section id="partners">
+	<h3>Our Partners</h3>
+	<div class="partners-grid">
+		{partners.map((partner) => (
+			<div class="partner-logo">
+				<Image src={baseUrl + partner.src} alt={partner.alt} loading="lazy" inferSize />
+			</div>
+		))}
+	</div>
+</section>
+
+<style>
+	.partners-grid {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 3rem;
+		margin-top: 2rem;
+	}
+
+	.partner-logo {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.partner-logo img {
+		max-height: 5rem;
+		max-width: 12rem;
+		width: auto;
+		object-fit: contain;
+		filter: grayscale(100%);
+		opacity: 0.7;
+		transition: filter 0.3s ease, opacity 0.3s ease;
+	}
+
+	.partner-logo img:hover {
+		filter: grayscale(0%);
+		opacity: 1;
+	}
+</style>
