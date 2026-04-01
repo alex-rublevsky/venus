@@ -1,6 +1,6 @@
 ---
 export const prerender = false;
-import GeneralLayout from '../../layouts/GeneralLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 const error = Astro.url.searchParams.get('error');
 const errorMessages: Record<string, string> = {
 	invalid: 'Invalid password. Please try again.',
@@ -8,7 +8,7 @@ const errorMessages: Record<string, string> = {
 };
 const errorMessage = error ? errorMessages[error] ?? null : null;
 ---
-<GeneralLayout noFooter noindex>
+<AdminLayout noFooter>
 	<div class="login-container">
 		<div class="login-card">
 			<h1>Analytics</h1>
@@ -29,7 +29,7 @@ const errorMessage = error ? errorMessages[error] ?? null : null;
 			</form>
 		</div>
 	</div>
-</GeneralLayout>
+</AdminLayout>
 
 <style>
 	.login-container {
