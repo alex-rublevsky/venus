@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'motion/react';
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface ScrollTextRevealProps {
   paragraph: string;
@@ -38,8 +38,8 @@ export default function ScrollTextReveal({
   return (
     <p 
       ref={container}         
-      className="text-2xl lg:text-3xl font-semibold max-w-3xl mx-auto"
-      style={{ lineHeight: '1.25' }}
+      className="font-semibold max-w-3xl mx-auto"
+      style={{ lineHeight: '1.25', fontSize: 'var(--fluid-2xl)' }}
     >
       {words.map((word, i) => {
         const start = i / words.length;

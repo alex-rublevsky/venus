@@ -189,13 +189,23 @@ class CustomCursor {
     this.lottieContainer.style.width = `${size}px`;
     this.lottieContainer.style.height = `${size}px`;
 
-    this.animation = lottie.loadAnimation({
-      container: this.lottieContainer,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: animationPath,
-    });
+    try {
+      this.animation = lottie.loadAnimation({
+        container: this.lottieContainer,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: animationPath,
+      });
+      
+      this.animation.addEventListener('data_failed', (error) => {
+        console.error('Lottie animation data failed to load:', error);
+        this.hide();
+      });
+    } catch (error) {
+      console.error('Failed to load Lottie animation:', error);
+      this.hide();
+    }
   }
 
   private showText(text: string) {

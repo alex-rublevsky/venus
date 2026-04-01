@@ -3,6 +3,7 @@ import Footer from "../components/Footer.astro";
 import TopBar from "../components/TopBar.astro";
 import BottomBar from "../components/BottomBar.astro";
 import SplashLoader from "../components/SplashLoader.tsx";
+import PostHog from "../components/posthog.astro";
 import "../styles/global.css";
 
 export interface Props {
@@ -13,7 +14,7 @@ export interface Props {
 }
 
 const {
-	title = 'Venus Construction Group - Professional Construction Services in Ontario',
+	title = 'Venus Construction Group - Professional Construction Services in Hamilton, Ontario',
 	description = 'Construction services in Ontario including custom house renovations, deck construction, and fence installation. Quality craftsmanship and reliable service.',
 	image = '/og-image.jpg',
 	noindex = false,
@@ -74,6 +75,7 @@ const businessSchema = {
 		<meta name="twitter:image" content={ogImageURL} />
 		
 		<script type="application/ld+json" set:html={JSON.stringify(businessSchema)} />
+		<PostHog />
 	</head>
 	
 	<body>

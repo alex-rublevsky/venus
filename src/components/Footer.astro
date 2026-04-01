@@ -2,9 +2,9 @@
 import Link from './Link.astro';
 ---
 <div 
-    class="relative h-full footer-wrapper"
+    class="relative h-dvh footer-wrapper"
 >
-    <div class="fixed bottom-0 h-full w-full" style="overflow-x: clip; overflow-y: visible;">
+    <div class="fixed bottom-0 h-dvh w-full" style="overflow-x: clip; overflow-y: visible;">
         <div class="absolute inset-0 bg-primary" style="clip-path: polygon(0% 0, 100% 0%, 100% 100%, 0 100%);"></div>
         <footer class="relative h-full flex flex-col items-center justify-between pt-16 pb-4 px-(--section-padding-x)">
             <div id="contact" class="contact-section flex-1 flex items-center justify-center w-full footer-content">
@@ -15,13 +15,13 @@ import Link from './Link.astro';
                         </p>
                         <Link
                             href="tel:+14168282380"
-                            class="text-secondary! text-5xl text-left block"
+                            class="text-secondary! text-3xl lg:text-4xl text-left block"
                         >
                             +1 416 828 2380
                         </Link>
                         <Link
                             href="mailto:venusfence.1@gmail.com"
-                            class="text-secondary! text-5xl text-left block"
+                            class="text-secondary! text-3xl lg:text-4xl text-left block"
                         >
                             venusfence.1@gmail.com
                         </Link>
@@ -30,9 +30,7 @@ import Link from './Link.astro';
             </div>
             
             <div class="flex gap-2 flex-wrap justify-center items-center footer-content">
-                <p class="text-center text-primary-foreground!">
-                    © All rights are reserved by the team of Venus Construction Group and it's owner Iqbal Masih. {new Date().getFullYear()}
-                </p>
+                
                 <p class="text-center text-primary-foreground!">
                     Like the site?{" "}
                     <Link
@@ -45,6 +43,10 @@ import Link from './Link.astro';
                         Contact the developer{" "}
                     </Link>
                 </p>
+                <p class="text-center text-primary-foreground/50!">
+                    © All rights are reserved by the team of Venus Construction Group and it's owner Iqbal Masih. {new Date().getFullYear()}
+                </p>
+              
             </div>
         </footer>
     </div>
@@ -148,3 +150,37 @@ import Link from './Link.astro';
         }
     }
 </style>
+
+<script is:inline>
+    document.addEventListener('DOMContentLoaded', function () {
+        var phoneLink = document.querySelector('a[href^="tel:"]');
+        var emailLink = document.querySelector('a[href^="mailto:"]');
+        var consultationLabel = document.querySelector('.consultation-label');
+
+        if (phoneLink) {
+            phoneLink.addEventListener('click', function () {
+                window.posthog?.capture('contact_phone_clicked', {
+                    phone_number: phoneLink.getAttribute('href').replace('tel:', ''),
+                    location: 'footer'
+                });
+            });
+        }
+
+        if (emailLink) {
+            emailLink.addEventListener('click', function () {
+                window.posthog?.capture('contact_email_clicked', {
+                    email: emailLink.getAttribute('href').replace('mailto:', ''),
+                    location: 'footer'
+                });
+            });
+        }
+
+        if (consultationLabel) {
+            consultationLabel.addEventListener('click', function () {
+                window.posthog?.capture('consultation_cta_clicked', {
+                    location: 'footer'
+                });
+            });
+        }
+    });
+</script>

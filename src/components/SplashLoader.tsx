@@ -15,6 +15,9 @@ export default function SplashLoader() {
     // Lock body scroll immediately
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+    // iOS Safari: overflow:hidden on html/body alone doesn't prevent touch-scroll on older versions
+    const preventTouchScroll = (e: TouchEvent) => e.preventDefault();
+    document.addEventListener('touchmove', preventTouchScroll, { passive: false });
 
     const startTime = performance.now();
     const abortController = new AbortController();
@@ -22,6 +25,7 @@ export default function SplashLoader() {
     // Cleanup function
     const cleanup = () => {
       abortController.abort();
+      document.removeEventListener('touchmove', preventTouchScroll);
     };
 
     // Wait for minimum display time
@@ -111,16 +115,35 @@ export default function SplashLoader() {
       const navbarLogo = findVisibleNavbarLogo();
       const heroLogotype = findHeroLogotype();
 
+      // Set up scroll unlock to fire exactly when nail finishes falling
+      const nailEl = document.querySelector('.nail-sticking');
+      const unlockScroll = () => {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        document.removeEventListener('touchmove', preventTouchScroll);
+      };
+      if (nailEl) {
+        // Safety net: always unlock after 1.5s in case animationend never fires
+        // (nail-fall is 1s, so 1.5s gives enough buffer on slow/old devices)
+        const safetyTimer = setTimeout(unlockScroll, 1500);
+        const unlockOnNailLand = (ev: Event) => {
+          if ((ev as AnimationEvent).animationName === 'nail-fall') {
+            clearTimeout(safetyTimer);
+            unlockScroll();
+            nailEl.removeEventListener('animationend', unlockOnNailLand);
+          }
+        };
+        nailEl.addEventListener('animationend', unlockOnNailLand);
+      } else {
+        // Fallback if nail element not found — match nail-fall duration
+        setTimeout(unlockScroll, 1000);
+      }
+
       // Check if View Transition API is supported
       if (!document.startViewTransition || !navbarLogo || !heroLogotype) {
         // Fallback: instant removal
         setVisible(false);
         document.documentElement.classList.add('splash-revealed');
-        // Keep scroll locked until nail finishes falling
-        setTimeout(() => {
-          document.documentElement.style.overflow = '';
-          document.body.style.overflow = '';
-        }, 1200);
         cleanup();
         return;
       }
@@ -137,7 +160,7 @@ export default function SplashLoader() {
 
       // Add CSS scoping class to <html>
       document.documentElement.classList.add('splash-dismissing');
-      
+
       // Add splash-revealed class to trigger entrance animations (like nail falling) BEFORE transition
       // This makes the nail start falling while the splash is transitioning out
       document.documentElement.classList.add('splash-revealed');
@@ -154,21 +177,10 @@ export default function SplashLoader() {
         });
 
         await transition.finished;
-        
-        // Keep scroll locked until nail finishes falling (1.2s animation)
-        setTimeout(() => {
-          document.documentElement.style.overflow = '';
-          document.body.style.overflow = '';
-        }, 1200);
       } catch (error) {
         // Transition failed, just hide splash
         setVisible(false);
         document.documentElement.classList.add('splash-revealed');
-        // Still unlock scroll after animation would have completed
-        setTimeout(() => {
-          document.documentElement.style.overflow = '';
-          document.body.style.overflow = '';
-        }, 1200);
       } finally {
         // Cleanup after animation completes
         navbarLogo.style.viewTransitionName = '';

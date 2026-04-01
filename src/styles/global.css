@@ -65,6 +65,18 @@
 	--font-size-7xl: clamp(3rem, 2vw + 2rem, 5rem);
 	--font-size-8xl: clamp(3.5rem, 2vw + 2.5rem, 6rem);
 	--font-size-9xl: clamp(4rem, 2vw + 3rem, 8rem);
+
+
+
+	/* Spacing */
+	--space-2xs: clamp(0.3125rem, 0.1847rem + 0.5682vw, 0.625rem);
+	--space-xs: clamp(0.5625rem, 0.4091rem + 0.6818vw, 0.9375rem);
+	--space-sm: clamp(0.875rem, 0.7216rem + 0.6818vw, 1.25rem);
+	--space-md: clamp(1.125rem, 0.8182rem + 1.3636vw, 1.875rem);
+	--space-lg: clamp(1.6875rem, 1.3551rem + 1.4773vw, 2.5rem);
+	--space-xl: clamp(2.25rem, 1.6364rem + 2.7273vw, 3.75rem);
+	--space-2xl: clamp(3.375rem, 2.7102rem + 2.9545vw, 5rem);
+	--space-3xl: clamp(4.5rem, 3.2727rem + 5.4545vw, 7.5rem);
 }
 
 
@@ -95,7 +107,7 @@
 	
 	--ring: 0 0% 3.9%;  */
 
-	--radius: 1rem;
+	--radius: 0.6rem;
 	--sidebar-background: 0 0% 98%;
 	--sidebar-foreground: 240 5.3% 26.1%;
 	--sidebar-primary: 240 5.9% 10%;
@@ -168,6 +180,9 @@
 	section.no-padding {
 		padding-left: 0;
 		padding-right: 0;
+	}
+	section.no-padding-bottom {
+		padding-bottom: 0;
 	}
 
 	/* Add padding to titles and controls in sections with no-padding */

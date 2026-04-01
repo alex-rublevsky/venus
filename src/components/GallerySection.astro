@@ -1,6 +1,7 @@
 ---
-import { galleryCategories } from '../data/galleryData.ts';
-import ScrollTextReveal from './ScrollTextReveal';
+import { Image } from "astro:assets";
+import { galleryCategories } from "../data/galleryData.ts";
+import ScrollTextReveal from "./ScrollTextReveal";
 
 interface Props {
     categories?: typeof galleryCategories;
@@ -11,56 +12,127 @@ interface Props {
     insidePerspectiveWrapper?: boolean;
 }
 
-const { 
-    categories = galleryCategories, 
+const {
+    categories = galleryCategories,
     baseUrl = "https://assets.venusconstructiongroup.ca/",
     showTitle = true,
     maxImagesPerCategory = Infinity,
     categoryIndexOffset = 0,
-    insidePerspectiveWrapper = false
+    insidePerspectiveWrapper = false,
 } = Astro.props;
+
+// Distribute items into columns matching CSS columns' sequential fill behavior
+function distributeIntoColumns<T>(items: T[], numColumns: number): T[][] {
+    const columns: T[][] = Array.from({ length: numColumns }, () => []);
+    const base = Math.floor(items.length / numColumns);
+    const remainder = items.length % numColumns;
+    let cursor = 0;
+    for (let col = 0; col < numColumns; col++) {
+        const count = base + (col < remainder ? 1 : 0);
+        for (let i = 0; i < count; i++) {
+            columns[col].push(items[cursor++]);
+        }
+    }
+    return columns;
+}
 ---
 
-<section id="gallery" class="gallery-section py-16 px-4 md:px-8 lg:px-16">
-    <div class="max-w-7xl mx-auto space-y-16 w-full">
-        {categories.map((category, categoryIndex) => (
-            <div class="category-section" id={`gallery-${categoryIndexOffset + categoryIndex}`}>
-                {showTitle && (
-                    <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">
-                        {category.title}
-                    </h2>
-                )}
-                <div class="mb-8">
-                    <ScrollTextReveal 
-                        paragraph={category.description} 
-                        insidePerspectiveWrapper={insidePerspectiveWrapper}
-                        client:load 
-                    />
+<section id="gallery" class="gallery-section py-16">
+    <div class="mx-auto space-y-16 w-full">
+        {
+            categories.map((category, categoryIndex) => (
+                <div
+                    class="category-section"
+                    id={`gallery-${categoryIndexOffset + categoryIndex}`}
+                >
+                    {showTitle && (
+                        <h2 class="gallery-title text-4xl font-bold mb-8 text-center">
+                            {category.title}
+                        </h2>
+                    )}
+                    <div class="gallery-description mb-8">
+                        <ScrollTextReveal
+                            paragraph={category.description}
+                            insidePerspectiveWrapper={insidePerspectiveWrapper}
+                            client:load
+                        />
+                    </div>
+                    {/* Mobile: manual flex columns to avoid CSS columns + view transition bug */}
+                    <div class="flex gap-3 md:hidden">
+                        {distributeIntoColumns(
+                            category.images.slice(0, maxImagesPerCategory),
+                            2,
+                        ).map((column) => (
+                            <div class="flex flex-col gap-2 flex-1">
+                                {column.map((image) => {
+                                    const imageSrc = baseUrl + image.src;
+                                    return (
+                                        <button
+                                            class={`overflow-hidden rounded-lg shadow-lg hover:shadow-xl w-full border-0 p-0 bg-transparent ${insidePerspectiveWrapper ? "gallery-image-button-perspective" : "gallery-image-button"}`}
+                                            data-lightbox-src={imageSrc}
+                                            data-image-alt={image.alt}
+                                        >
+                                            <Image
+                                                inferSize
+                                                src={imageSrc}
+                                                alt={image.alt}
+                                                class="w-full h-auto gallery-thumbnail"
+                                                data-splash-critical={
+                                                    categoryIndex === 0
+                                                        ? ""
+                                                        : undefined
+                                                }
+                                                loading={
+                                                    categoryIndex === 0
+                                                        ? "eager"
+                                                        : "lazy"
+                                                }
+                                                decoding="async"
+                                            />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        ))}
+                    </div>
+                    {/* Tablet+: original CSS columns layout */}
+                    <div class="hidden md:block md:columns-3 lg:columns-4 gap-3">
+                        {category.images
+                            .slice(0, maxImagesPerCategory)
+                            .map((image) => {
+                                const imageSrc = baseUrl + image.src;
+                                return (
+                                    <div class="pb-2 break-inside-avoid">
+                                        <button
+                                            class={`overflow-hidden rounded-lg shadow-lg hover:shadow-xl w-full border-0 p-0 bg-transparent ${insidePerspectiveWrapper ? "gallery-image-button-perspective" : "gallery-image-button"}`}
+                                            data-lightbox-src={imageSrc}
+                                            data-image-alt={image.alt}
+                                        >
+                                            <Image
+                                                inferSize
+                                                src={imageSrc}
+                                                alt={image.alt}
+                                                class="w-full h-auto gallery-thumbnail"
+                                                data-splash-critical={
+                                                    categoryIndex === 0
+                                                        ? ""
+                                                        : undefined
+                                                }
+                                                loading={
+                                                    categoryIndex === 0
+                                                        ? "eager"
+                                                        : "lazy"
+                                                }
+                                                decoding="async"
+                                            />
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                    </div>
                 </div>
-                <div class="columns-2 md:columns-3 lg:columns-4 gap-4">
-                    {category.images.slice(0, maxImagesPerCategory).map((image, index) => (
-                        <div class="mb-4 break-inside-avoid">
-                            <button 
-                                class={`overflow-hidden rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ease-out w-full border-0 p-0 bg-transparent ${insidePerspectiveWrapper ? 'gallery-image-button-perspective' : 'gallery-image-button'}`}
-                                data-image-src={baseUrl + image.src}
-                                data-image-alt={image.alt}
-                            >
-                                <img 
-                                    src={baseUrl + image.src} 
-                                    alt={image.alt} 
-                                    width="1000" 
-                                    height="1000" 
-                                    class="w-full h-auto hover:scale-105 transition-transform duration-300 ease-out gallery-thumbnail"
-                                    data-splash-critical={categoryIndex === 0 ? "" : undefined}
-                                    loading="eager"
-                                    decoding="async"
-                                />
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        ))}
+            ))
+        }
     </div>
 </section>
 
@@ -69,27 +141,37 @@ const {
 </dialog>
 
 <script>
-    import { spring } from 'motion';
+    import { spring } from "motion";
 
-    const lightbox = document.getElementById('lightbox') as HTMLDialogElement;
-    const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
-    const galleryButtons = document.querySelectorAll('.gallery-image-button, .gallery-image-button-perspective');
-    
+    const lightbox = document.getElementById("lightbox") as HTMLDialogElement;
+    const lightboxImage = document.getElementById(
+        "lightbox-image",
+    ) as HTMLImageElement;
+    const galleryButtons = document.querySelectorAll(
+        ".gallery-image-button, .gallery-image-button-perspective",
+    );
+
     let currentThumbnailImg: HTMLImageElement | null = null;
+    let activeTransition: ViewTransition | null = null;
+    let pendingClose = false;
+
+    // Image preload cache for smooth transitions
+    const imageCache = new Map<string, HTMLImageElement>();
+    const isTouchDevice =
+        "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
     // Generate spring animation and inject CSS
     const springString = spring(0.27, 0.26).toString();
     const springMatch = springString.match(/^(\d+(?:\.\d+)?m?s)\s+(.+)$/);
-    const springDuration = springMatch ? springMatch[1] : '750ms';
-    const springEasing = springMatch ? springMatch[2] : 'ease-out';
+    const springDuration = springMatch ? springMatch[1] : "750ms";
+    const springEasing = springMatch ? springMatch[2] : "ease-out";
 
-    const styleElement = document.createElement('style');
+    const styleElement = document.createElement("style");
     styleElement.textContent = `
         ::view-transition-group(gallery-image) {
             animation-duration: ${springDuration} !important;
             animation-timing-function: ${springEasing} !important;
         }
-        
         ::view-transition-old(gallery-image),
         ::view-transition-new(gallery-image) {
             animation-duration: ${springDuration} !important;
@@ -98,107 +180,307 @@ const {
     `;
     document.head.appendChild(styleElement);
 
-    // Custom cursor management
-    let cursorVisible = false;
-
+    // Custom cursor management — skip entirely on touch devices
     function showCustomCursor() {
-        cursorVisible = true;
-        window.dispatchEvent(new CustomEvent('cursor-visibility', { detail: { visible: true } }));
+        if (isTouchDevice) return;
+        window.dispatchEvent(
+            new CustomEvent("custom-cursor-show", {
+                detail: {
+                    mode: "lottie",
+                    lottieAnimation: "/animations/eyes-cursor.json",
+                    size: 70,
+                },
+            }),
+        );
     }
 
     function hideCustomCursor() {
-        cursorVisible = false;
-        window.dispatchEvent(new CustomEvent('cursor-visibility', { detail: { visible: false } }));
+        if (isTouchDevice) return;
+        window.dispatchEvent(new CustomEvent("custom-cursor-hide"));
     }
 
-    function openLightbox(buttonElement: HTMLButtonElement) {
-        const thumbnailImg = buttonElement.querySelector('img.gallery-thumbnail') as HTMLImageElement;
-        const imageSrc = buttonElement.getAttribute('data-image-src');
-        const imageAlt = buttonElement.getAttribute('data-image-alt');
-        
-        if (!thumbnailImg || !imageSrc || !imageAlt) return;
-        
+    // Preload image on hover for instant transitions
+    function preloadImage(src: string) {
+        if (imageCache.has(src)) return;
+        const img = new Image();
+        img.src = src;
+        imageCache.set(src, img);
+    }
+
+    // Ensure image is loaded and decoded before transition
+    async function ensureImageLoaded(src: string): Promise<HTMLImageElement> {
+        let img = imageCache.get(src);
+        if (!img) {
+            img = new Image();
+            img.src = src;
+            imageCache.set(src, img);
+        }
+        await img.decode();
+        return img;
+    }
+
+    // Freeze scroll-driven perspective animations during view transitions.
+    // Without this, startViewTransition() triggers style recalculation that
+    // briefly resets the animation to its initial rotated frame (known spec issue).
+    const perspectiveElements = document.querySelectorAll<HTMLElement>(
+        "[data-perspective-section]",
+    );
+
+    function freezePerspective() {
+        perspectiveElements.forEach((el) => {
+            el.style.transform = getComputedStyle(el).transform;
+            el.style.animation = "none";
+        });
+    }
+
+    function unfreezePerspective() {
+        perspectiveElements.forEach((el) => {
+            el.style.transform = "";
+            el.style.animation = "";
+        });
+    }
+
+    // Freeze scroll-driven appear animations on gallery buttons during view transitions.
+    // Without this, startViewTransition() recalculates styles and resets the
+    // scroll-driven animation, causing a visible flash (opacity/scale jump).
+    function freezeGalleryAnimations() {
+        galleryButtons.forEach((btn) => {
+            const el = btn as HTMLElement;
+            const computed = getComputedStyle(el);
+            el.style.opacity = computed.opacity;
+            el.style.scale = computed.scale;
+            el.style.animation = "none";
+        });
+    }
+
+    function unfreezeGalleryAnimations() {
+        galleryButtons.forEach((btn) => {
+            const el = btn as HTMLElement;
+            el.style.opacity = "";
+            el.style.scale = "";
+            el.style.animation = "";
+        });
+    }
+
+    // Scroll lock — blocks wheel + touch without changing scroll position or body layout
+    function preventScrollEvent(e: Event) {
+        e.preventDefault();
+    }
+
+    function lockScroll() {
+        document.addEventListener("wheel", preventScrollEvent, {
+            passive: false,
+        });
+        document.addEventListener("touchmove", preventScrollEvent, {
+            passive: false,
+        });
+    }
+
+    function unlockScroll() {
+        document.removeEventListener("wheel", preventScrollEvent);
+        document.removeEventListener("touchmove", preventScrollEvent);
+    }
+
+    async function openLightbox(buttonElement: HTMLButtonElement) {
+        const thumbnailImg = buttonElement.querySelector(
+            "img.gallery-thumbnail",
+        ) as HTMLImageElement;
+        const lightboxSrc = buttonElement.getAttribute("data-lightbox-src");
+        const imageAlt = buttonElement.getAttribute("data-image-alt");
+
+        if (!thumbnailImg || !lightboxSrc || !imageAlt) return;
+
+        const categorySection = buttonElement.closest(".category-section");
+        const categoryTitle =
+            categorySection
+                ?.querySelector(".gallery-title")
+                ?.textContent?.trim() || "unknown";
+        window.posthog?.capture("gallery_image_opened", {
+            image_src: lightboxSrc,
+            image_alt: imageAlt,
+            category: categoryTitle,
+        });
+
         currentThumbnailImg = thumbnailImg;
-        
         hideCustomCursor();
-        
+        buttonElement.style.transform = "";
+
         if (!document.startViewTransition) {
-            lightboxImage.src = imageSrc;
+            lightboxImage.src = lightboxSrc;
             lightboxImage.alt = imageAlt;
+            lockScroll();
             lightbox.showModal();
             return;
         }
 
-        thumbnailImg.style.viewTransitionName = 'gallery-image';
+        await ensureImageLoaded(lightboxSrc);
+        thumbnailImg.style.viewTransitionName = "gallery-image";
+        document.documentElement.style.viewTransitionName = "none";
+        freezePerspective();
+        freezeGalleryAnimations();
 
         const transition = document.startViewTransition(() => {
-            thumbnailImg.style.viewTransitionName = '';
-            lightboxImage.src = imageSrc;
+            thumbnailImg.style.viewTransitionName = "";
+            lightboxImage.src = lightboxSrc;
             lightboxImage.alt = imageAlt;
-            lightboxImage.style.viewTransitionName = 'gallery-image';
+            lightboxImage.style.viewTransitionName = "gallery-image";
+            lockScroll();
             lightbox.showModal();
         });
+        activeTransition = transition;
 
         transition.finished.finally(() => {
-            lightboxImage.style.viewTransitionName = '';
+            lightboxImage.style.viewTransitionName = "";
+            buttonElement.style.transform = "";
+            activeTransition = null;
+
+            if (pendingClose) {
+                // Skip unfreeze — closeLightbox will manage its own freeze/unfreeze cycle
+                pendingClose = false;
+                closeLightbox();
+            } else {
+                unfreezePerspective();
+                unfreezeGalleryAnimations();
+            }
         });
     }
 
     function closeLightbox() {
+        // If the open transition is still running, queue the close for after it finishes
+        if (activeTransition) {
+            pendingClose = true;
+            return;
+        }
+
         if (!currentThumbnailImg) {
             lightbox.close();
+            unlockScroll();
+            lightboxImage.src = "";
             return;
         }
-        
+
         const thumbnailImg = currentThumbnailImg;
-        
+
         if (!document.startViewTransition) {
             lightbox.close();
+            unlockScroll();
             currentThumbnailImg = null;
+            lightboxImage.src = "";
             return;
         }
 
-        lightboxImage.style.viewTransitionName = 'gallery-image';
-        
+        lightboxImage.style.viewTransitionName = "gallery-image";
+        freezePerspective();
+        freezeGalleryAnimations();
+
         const transition = document.startViewTransition(() => {
-            lightboxImage.style.viewTransitionName = '';
-            thumbnailImg.style.viewTransitionName = 'gallery-image';
+            lightboxImage.style.viewTransitionName = "";
+            thumbnailImg.style.viewTransitionName = "gallery-image";
             lightbox.close();
         });
+        activeTransition = transition;
 
         transition.finished.finally(() => {
-            thumbnailImg.style.viewTransitionName = '';
+            activeTransition = null;
+            thumbnailImg.style.viewTransitionName = "";
+            unfreezePerspective();
+            unfreezeGalleryAnimations();
+            unlockScroll();
             currentThumbnailImg = null;
+            lightboxImage.src = "";
         });
     }
 
     galleryButtons.forEach((button) => {
-        button.addEventListener('click', (e) => {
+        button.addEventListener("click", (e) => {
             const target = e.currentTarget as HTMLButtonElement;
             openLightbox(target);
         });
 
-        button.addEventListener('mouseenter', () => {
+        button.addEventListener("mouseenter", () => {
             showCustomCursor();
+            const lightboxSrc = (button as HTMLButtonElement).getAttribute(
+                "data-lightbox-src",
+            );
+            if (lightboxSrc) {
+                preloadImage(lightboxSrc);
+            }
         });
 
-        button.addEventListener('mouseleave', () => {
+        button.addEventListener("mouseleave", () => {
             hideCustomCursor();
         });
     });
 
-    lightbox.addEventListener('click', () => {
+    lightbox.addEventListener("click", () => {
         closeLightbox();
+    });
+
+    // Escape key fires 'cancel' on dialogs — handle it so scroll is properly unlocked
+    lightbox.addEventListener("cancel", (e: Event) => {
+        e.preventDefault();
+        closeLightbox();
+    });
+</script>
+
+<script>
+    const observerOptions = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.1,
+    };
+
+    const viewedSections = new Set<string>();
+
+    const animateOnScroll = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("animate-in");
+
+                // Track gallery_section_viewed once per section
+                const section = entry.target.closest(".category-section");
+                const sectionId = section?.id;
+                const title = (entry.target as HTMLElement).textContent?.trim();
+                if (
+                    sectionId &&
+                    !viewedSections.has(sectionId) &&
+                    entry.target.classList.contains("gallery-title")
+                ) {
+                    viewedSections.add(sectionId);
+                    window.posthog?.capture("gallery_section_viewed", {
+                        section_id: sectionId,
+                        section_title: title || "unknown",
+                    });
+                }
+            }
+        });
+    };
+
+    const observer = new IntersectionObserver(animateOnScroll, observerOptions);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const galleryTitles = document.querySelectorAll(".gallery-title");
+        const galleryDescriptions = document.querySelectorAll(
+            ".gallery-description",
+        );
+
+        galleryTitles.forEach((title) => {
+            observer.observe(title);
+        });
+
+        galleryDescriptions.forEach((description) => {
+            observer.observe(description);
+        });
     });
 </script>
 
 <style>
     .lightbox-dialog {
         inset: 0;
-        max-width: 100vw;
-        max-height: 100vh;
-        width: 100vw;
-        height: 100vh;
+        max-width: 100dvw;
+        max-height: 100dvh;
+        width: 100dvw;
+        height: 100dvh;
         padding: 2rem;
         border: none;
         background: transparent;
@@ -207,8 +489,17 @@ const {
         justify-content: center;
         overscroll-behavior: contain;
         cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
     }
-    
+
+    @media (max-width: 768px) {
+        .lightbox-dialog {
+            padding: 1rem;
+        }
+    }
+
     .lightbox-dialog:not([open]) {
         display: none;
     }
@@ -217,8 +508,33 @@ const {
         background-color: rgb(from var(--background) r g b / 0.5);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        overflow: hidden;
-        overscroll-behavior: contain;
+        transition:
+            backdrop-filter 0.3s ease-out,
+            background-color 0.3s ease-out,
+            opacity 0.3s ease-out;
+        opacity: 1;
+    }
+
+    @starting-style {
+        .lightbox-dialog[open]::backdrop {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .lightbox-dialog::backdrop {
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        @starting-style {
+            .lightbox-dialog[open]::backdrop {
+                backdrop-filter: blur(0px);
+                -webkit-backdrop-filter: blur(0px);
+            }
+        }
     }
 
     .lightbox-image {
@@ -233,28 +549,54 @@ const {
 
     .gallery-image-button {
         display: block;
-        cursor: none;
+        cursor: pointer;
         animation: appear linear both;
         animation-timeline: view();
         animation-range: entry 0% cover 24%;
-        &:active {
-            transform: scale(0.98);
-            transition: transform 0.2s ease-out;
+        transition: transform 0.2s ease-out;
+
+        /* Only apply hover/active transforms on true hover devices to avoid double-tap on touch */
+        @media (hover: hover) and (pointer: fine) {
+            cursor: none;
+            &:hover {
+                transform: scale(1.03);
+            }
+            &:active {
+                transform: scale(0.98);
+                transition: transform 0.2s ease-out;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) and (min-width: 1280px) {
+            cursor: none;
         }
     }
-    
+
     .gallery-image-button-perspective {
         display: block;
-        cursor: none;
+        cursor: pointer;
         animation: appear linear both;
         animation-timeline: view();
         animation-range: cover -100vh cover -72vh;
-        &:active {
-            transform: scale(0.98);
-            transition: transform 0.2s ease-out;
+        transition: transform 0.2s ease-out;
+
+        /* Only apply hover/active transforms on true hover devices to avoid double-tap on touch */
+        @media (hover: hover) and (pointer: fine) {
+            cursor: none;
+            &:hover {
+                transform: scale(1.025);
+            }
+            &:active {
+                transform: scale(0.98);
+                transition: transform 0.2s ease-out;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) and (min-width: 1280px) {
+            cursor: none;
         }
     }
-    
+
     @keyframes appear {
         from {
             opacity: 0;
@@ -268,16 +610,44 @@ const {
 
     .gallery-thumbnail {
         display: block;
+        -webkit-user-drag: none;
     }
 </style>
 
 <style>
     .gallery-section {
         padding-bottom: 2rem !important;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
     }
-    
+
     .category-section {
         scroll-margin-top: 4rem;
+    }
+
+    .gallery-title,
+    .gallery-description {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(10px);
+        transition:
+            opacity 0.8s ease-out,
+            transform 0.8s ease-out,
+            filter 0.8s ease-out;
+    }
+
+    .gallery-title.animate-in {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+
+    .gallery-description.animate-in {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+        transition-delay: 0.15s;
     }
 </style>
 

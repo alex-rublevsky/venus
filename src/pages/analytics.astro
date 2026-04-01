@@ -1,0 +1,21 @@
+---
+import GeneralLayout from '../layouts/GeneralLayout.astro';
+export const prerender = false;
+---
+<GeneralLayout noFooter noindex>
+    <div class="iframe-container">
+        <iframe width="100%" height="100%" frameborder="0" allowfullscreen src="https://us.posthog.com/embedded/CPfxPVfJC5n13QWszG8vfvP_HnY2HA" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+    </div>
+</GeneralLayout>
+
+<style>
+    .iframe-container {
+        width: 100%;
+        height: 100vh;
+        min-height: 600px;
+    }
+    .iframe-container iframe {
+        display: block;
+        border: none;
+    }
+</style>

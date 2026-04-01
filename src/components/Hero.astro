@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 const baseUrl = "https://assets.venusconstructiongroup.ca/";
 import logoSvg from '../data/logotype.svg?raw';
 ---
@@ -11,17 +12,21 @@ import logoSvg from '../data/logotype.svg?raw';
         <div class="logo-animation-wrapper">
             <!-- Hammer and Nail Animation -->
             <div class="hammer-nail-container">
-                <img 
-                    src={baseUrl + "misc/nail.webp"} 
-                    alt="Nail decoration" 
+                <Image
+                    src={baseUrl + "misc/nail.webp"}
+                    alt="Nail decoration"
                     class="nail-sticking"
                     aria-hidden="true"
+                    inferSize
+                    loading="eager"
                 />
-                <img 
-                    src={baseUrl + "misc/hammer.webp"} 
-                    alt="Hammer decoration" 
+                <Image
+                    src={baseUrl + "misc/hammer.webp"}
+                    alt="Hammer decoration"
                     class="hammer-flying"
                     aria-hidden="true"
+                    inferSize
+                    loading="eager"
                 />
             </div>
             
@@ -43,8 +48,6 @@ import logoSvg from '../data/logotype.svg?raw';
 
 <style>
     .hero-section {
-        view-timeline-name: --hero-timeline;
-        view-timeline-axis: block;
         position: absolute;
         inset: 0;
         display: flex;
@@ -155,16 +158,16 @@ import logoSvg from '../data/logotype.svg?raw';
     /* Falling animation after splash */
     html.splash-revealed .nail-sticking {
         opacity: 1;
-        animation: nail-fall 1.2s cubic-bezier(0.34, 0, 0.84, 0) forwards;
+        animation: nail-fall 1s cubic-bezier(0.34, 0, 0.84, 0) forwards;
     }
     
-    /* Enable scroll animation after nail lands - higher specificity */
+    /* Enable scroll animation after nail lands - uses scroll(root) for reliability
+       (same approach as the section transitions in PerspectiveTransitionWrapper) */
     html.splash-revealed .nail-sticking.nail-landed {
-        /* Keep the landed position, add scroll animation */
         transform: translateX(-45%) translateY(3vw);
         animation: nail-hammer-in ease-out forwards;
-        animation-timeline: --hero-timeline;
-        animation-range: contain 0% contain 80%;
+        animation-timeline: scroll(root);
+        animation-range: 0vh 80vh;
     }
 
     .hammer-flying {
@@ -186,8 +189,19 @@ import logoSvg from '../data/logotype.svg?raw';
     html.splash-revealed .hammer-flying.nail-landed {
         animation: hammer-entrance 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards,
                    hammer-fly ease-out forwards;
-        animation-timeline: auto, --hero-timeline;
-        animation-range: normal, contain 0% contain 80%;
+        animation-timeline: auto, scroll(root);
+        animation-range: normal, 0vh 80vh;
+    }
+
+    /* Mobile: extend animation range so the hammer strike plays over more scroll distance.
+       The hero is still visible during this range because the second section animates in later. */
+    @media (max-width: 767px) {
+        html.splash-revealed .nail-sticking.nail-landed {
+            animation-range: 0vh 120vh;
+        }
+        html.splash-revealed .hammer-flying.nail-landed {
+            animation-range: normal, 0vh 120vh;
+        }
     }
 
     /* Nail falling from off-screen (gravity effect) */
@@ -279,8 +293,8 @@ import logoSvg from '../data/logotype.svg?raw';
         }
     } */
 
-    /* Fallback for browsers without view() support */
-    @supports not (animation-timeline: --hero-timeline) {
+    /* Fallback for browsers without scroll-driven animation support */
+    @supports not (animation-timeline: scroll()) {
         .nail-sticking {
             animation: none;
         }
@@ -315,33 +329,11 @@ import logoSvg from '../data/logotype.svg?raw';
     if (heroSection) {
         observer.observe(heroSection);
     }
-    
-    // Wood texture mask creation disabled
-    /* const logotype = document.querySelector('.logotype');
-    const woodTexture = document.querySelector('.logo-wood-texture');
-    
-    if (logotype && woodTexture) {
-        const svg = logotype.querySelector('svg');
-        if (svg) {
-            // Clone the SVG and convert to data URL for mask
-            const svgClone = svg.cloneNode(true);
-            // Make all paths black for mask
-            svgClone.querySelectorAll('path').forEach(path => {
-                path.setAttribute('fill', 'black');
-            });
-            const svgString = new XMLSerializer().serializeToString(svgClone);
-            const svgBase64 = btoa(unescape(encodeURIComponent(svgString)));
-            const maskUrl = `url(data:image/svg+xml;base64,${svgBase64})`;
-            
-            // Set the CSS variable for mask
-            woodTexture.style.setProperty('--logo-mask', maskUrl);
-        }
-    } */
-    
+
     // Enable scroll animations after nail finishes falling
     const nail = document.querySelector('.nail-sticking');
     const hammer = document.querySelector('.hammer-flying');
-    
+
     if (nail) {
         nail.addEventListener('animationend', function handler(e) {
             if (e.animationName === 'nail-fall') {
@@ -350,13 +342,8 @@ import logoSvg from '../data/logotype.svg?raw';
                 if (hammer) {
                     hammer.classList.add('nail-landed');
                 }
-                // Wood texture animation disabled
-                /* if (woodTexture) {
-                    woodTexture.classList.add('nail-landed');
-                } */
                 nail.removeEventListener('animationend', handler);
             }
         });
     }
-    
 </script>

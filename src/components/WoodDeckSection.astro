@@ -43,76 +43,8 @@ const woodPlanks = [Union, Union1, Union2, Union3, Union4];
 	</div>
 </section>
 
-<script>
-	(function setupWoodDeckAnimation() {
-		const section = document.querySelector('.wood-deck-section');
-		if (!section) return;
-
-		const rows = section.querySelectorAll<HTMLElement>('.wood-row');
-		if (!rows.length) return;
-
-	const firstPlank = section.querySelector('.wood-plank') as HTMLElement;
-	if (!firstPlank) return;
-	
-	const plankWidth = firstPlank.offsetWidth;
-		const computedStyle = window.getComputedStyle(section.querySelector('.wood-row')!);
-		const gap = parseFloat(computedStyle.gap);
-		const plankTotalWidth = plankWidth + gap;
-		const loopWidth = 15 * plankTotalWidth;
-
-		let lastScrollY = window.scrollY;
-		let isInViewport = false;
-
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					isInViewport = entry.isIntersecting;
-				});
-			},
-			{
-				threshold: 0,
-				rootMargin: '0px'
-			}
-		);
-
-		observer.observe(section);
-
-		const updateAnimation = () => {
-			if (!isInViewport) return;
-
-			const currentScrollY = window.scrollY;
-			const scrollDelta = currentScrollY - lastScrollY;
-			
-			rows.forEach((row) => {
-				const direction = row.getAttribute('data-direction');
-				
-				const currentTransform = row.style.transform || 'translateX(0px)';
-				const match = currentTransform.match(/translateX\(([-\d.]+)px\)/);
-				let currentX = match ? parseFloat(match[1]) : 0;
-				
-				if (direction === 'right') {
-					currentX += scrollDelta * 0.5;
-				} else {
-					currentX -= scrollDelta * 0.5;
-				}
-				
-				while (currentX > 0) currentX -= loopWidth;
-				while (currentX < -loopWidth) currentX += loopWidth;
-				
-				row.style.transform = `translateX(${currentX}px)`;
-			});
-
-			lastScrollY = currentScrollY;
-		};
-
-		window.addEventListener('scroll', updateAnimation, { passive: true });
-	})();
-</script>
-
 <style>
 	.wood-deck-section {
-		view-timeline-name: --wood-deck-timeline;
-		view-timeline-axis: block;
 		overflow: hidden;
 		padding: 4rem 0;
 		background-color: var(--background);
@@ -135,7 +67,29 @@ const woodPlanks = [Union, Union1, Union2, Union3, Union4];
 		gap: 0.25rem;
 		width: max-content;
 		will-change: transform;
+	}
+
+	/* Scroll-driven parallax — runs on compositor, zero JS */
+	.wood-row[data-direction="right"] {
+		transform: translateX(-20%);
+		animation: wood-row-right linear both;
+		animation-timeline: scroll(root);
+	}
+
+	.wood-row[data-direction="left"] {
 		transform: translateX(0);
+		animation: wood-row-left linear both;
+		animation-timeline: scroll(root);
+	}
+
+	@keyframes wood-row-right {
+		from { transform: translateX(-20%); }
+		to { transform: translateX(0); }
+	}
+
+	@keyframes wood-row-left {
+		from { transform: translateX(0); }
+		to { transform: translateX(-20%); }
 	}
 
 	.wood-plank {
@@ -174,9 +128,18 @@ const woodPlanks = [Union, Union1, Union2, Union3, Union4];
 		}
 	}
 
+	@supports not (animation-timeline: scroll()) {
+		.wood-row[data-direction="right"],
+		.wood-row[data-direction="left"] {
+			animation: none;
+			transform: translateX(-10%);
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.wood-row {
 			will-change: auto;
+			animation: none !important;
 		}
 	}
 </style>

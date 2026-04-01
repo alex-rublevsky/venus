@@ -11,19 +11,33 @@ import sitemap from '@astrojs/sitemap';
 
 import robotsTxt from 'astro-robots-txt';
 
+import { imageService } from '@unpic/astro/service';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.venusconstructiongroup.ca',
-  
+
   image: {
     domains: ['assets.venusconstructiongroup.ca'],
+    layout: 'constrained',
+    service: imageService({
+      layout: 'constrained',
+    }),
   },
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    ssr: {
+      noExternal: ['lottie-web']
+    },
+    optimizeDeps: {
+      include: ['lottie-web']
+    }
   },
 
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: 'compile',
+  }),
   
   integrations: [
     react(),
@@ -34,6 +48,7 @@ export default defineConfig({
         {
           userAgent: '*',
           allow: '/',
+          disallow: ['/analytics'],
         },
       ],
     }),

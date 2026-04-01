@@ -115,6 +115,9 @@ export function initNavigationController() {
 
   // Hide navigation bars when wood deck section enters viewport
   initWoodDeckVisibility();
+  
+  // Initialize minimal nav styling at top of page
+  initMinimalNavState();
 }
 
 function initWoodDeckVisibility() {
@@ -160,6 +163,48 @@ function initWoodDeckVisibility() {
   );
   
   visibilityObserver.observe(woodDeck);
+}
+
+function initMinimalNavState() {
+  const topBar = document.querySelector('[data-top-bar]') as HTMLElement;
+  const bottomBar = document.querySelector('[data-bottom-bar]') as HTMLElement;
+  
+  const bars = [topBar, bottomBar].filter(Boolean) as HTMLElement[];
+  
+  if (bars.length === 0) {
+    console.warn('No navigation bars found for minimal state');
+    return;
+  }
+
+  let ticking = false;
+  const scrollThreshold = 50; // pixels from top before showing full styling
+
+  function updateMinimalState() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    
+    bars.forEach(bar => {
+      if (scrollY <= scrollThreshold) {
+        bar.classList.add('nav-minimal');
+      } else {
+        bar.classList.remove('nav-minimal');
+      }
+    });
+    
+    ticking = false;
+  }
+
+  function requestTick() {
+    if (!ticking) {
+      requestAnimationFrame(updateMinimalState);
+      ticking = true;
+    }
+  }
+
+  // Initial state
+  updateMinimalState();
+
+  // Listen for scroll with RAF for performance
+  window.addEventListener('scroll', requestTick, { passive: true });
 }
 
 // Auto-initialize when DOM is ready
